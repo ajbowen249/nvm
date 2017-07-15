@@ -13,17 +13,22 @@ namespace nvm {
     public:
         typedef std::shared_ptr<NVMInterface> Ptr;
 
-        virtual void writeWord(_address_t address, _uword_t word) = 0;
-        virtual void writeWord(_address_t address, _word_t word) = 0;
+		template <typename tdata>
+		void write(_address_t address, tdata data) {
+			write(address, (uint8_t*)(&data), sizeof(data));
+		}
 
-        virtual void writeByte(_address_t address, _ui8_t byte) = 0;
-        virtual void writeByte(_address_t address, _i8_t byte) = 0;
+		template <typename tdata>
+		tdata read(_address_t address) {
+			auto size = sizeof(tdata);
+			uint8_t data[size];
+			read(address, data, size);
+			return *(tdata*)(data);
+		}
 
-        virtual _uword_t readUWord(_address_t address) = 0;
-        virtual _word_t readWord(_address_t address) = 0;
-
-        virtual _ui8_t readUByte(_address_t address) = 0;
-        virtual _i8_t readByte(_address_t address) = 0;
+	private:
+		virtual void write(_address_t address, const uint8_t data[], _address_t width) = 0;
+		virtual void read(_address_t address, uint8_t data[], _address_t width) = 0;
     };
 }
 
