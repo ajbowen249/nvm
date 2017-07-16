@@ -9,13 +9,23 @@ The core implementation of the
 #include "Error.h"
 
 namespace nvm {
+	enum Instruction {
+		NoOp = 0x00,
+		Add = 0x01,
+		Subtract = 0x02,
+		Multiply = 0x03,
+		Divide = 0x04
+	};
+
     class Core {
     public:
         Error initialize(Interface::Ptr machineInterface, Options::Ptr options);
         Error process();
+		void reset();
 
     private:
         Interface::Ptr interface_;
+		Options::Ptr options_;
 
 		int8_t i8Registers_[NUMGPREGS];
 		uint8_t ui8Registers_[NUMGPREGS];
@@ -28,6 +38,8 @@ namespace nvm {
 
 		address_t instructionPointer_;
 		address_t stackPointer_;
+
+		Error fetchAndIncrement(uint8_t instruction[]);
     };
 }
 

@@ -20,13 +20,12 @@ namespace nvm {
 
 		template <typename tdata>
 		tdata read(address_t address) {
-			auto size = sizeof(tdata);
-			uint8_t data[size];
-			read(address, data, size);
+			uint8_t data[sizeof(tdata)];
+			read(address, data, sizeof(tdata));
 			return *(tdata*)(data);
 		}
 
-		virtual address_t getMaxMemory() = 0;
+		virtual address_t getMaxMemory() const = 0;
 
 	private:
 		virtual void write(address_t address, const uint8_t data[], address_t width) = 0;

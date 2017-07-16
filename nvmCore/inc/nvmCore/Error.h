@@ -14,7 +14,9 @@ namespace nvm {
 	enum class ErrorDetail {
 		//Configuration
 		None,
-		StackSizeGreaterThanMemorySpace
+		StackSizeGreaterThanMemorySpace,
+		BootVectorGreaterThanMemorySpace,
+		BootVectorInsideStack
 	};
 
 	struct Error {

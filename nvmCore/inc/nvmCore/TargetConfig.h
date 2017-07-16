@@ -17,6 +17,8 @@ typedef double f64_t;
     #define NUMGPREGS 16
 #endif
 
+#define LONGESTINSTRUCTION 3
+
 namespace nvm {
 #ifdef AS32
 	typedef uint32_t address_t;

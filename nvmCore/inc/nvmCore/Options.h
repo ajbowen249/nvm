@@ -12,16 +12,20 @@ Runtime-configurable options
 namespace nvm {
 	class Options {
 	public:
-		typedef std::shared_ptr<Options> Ptr;
+		typedef std::shared_ptr<const Options> Ptr;
 
 		Options();
 
-		address_t getStackSize();
+		address_t getStackSize() const;
 		void setStackSize(address_t stackSize);
 
-		Error validate(Interface::Ptr interface);
+		address_t getBootVector() const;
+		void setBootVector(address_t bootVector);
+
+		Error validate(Interface::Ptr interface) const;
 	private:
 		address_t stackSize_;
+		address_t bootVector_;
 	};
 }
 

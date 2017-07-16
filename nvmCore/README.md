@@ -65,7 +65,7 @@ Literally does nothing.
 | 00000001 | tttt|rrrr                               | rrrr|rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
-Add adds the values of the two operand registers and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
+Adds the values of the two operand registers and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
 
 ### Subtract
 **Mnemonic**: SUB
@@ -77,7 +77,7 @@ Add adds the values of the two operand registers and stores the result in the st
 | 00000010 | tttt|rrrr                               | rrrr|rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
-Subtracts adds the value of the second operand register from the first and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
+Subtracts the value of the second operand register from the first and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
 
 ### Multiply
 **Mnemonic**: MULT
@@ -89,7 +89,7 @@ Subtracts adds the value of the second operand register from the first and store
 | 00000011 | tttt|rrrr                               | rrrr|rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
-Multiplies adds the values of the two operand registers and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
+Multiplies the values of the two operand registers and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
 
 ### Divide
 **Mnemonic**: DIV
@@ -101,4 +101,4 @@ Multiplies adds the values of the two operand registers and stores the result in
 | 00000100 | tttt|rrrr                               | rrrr|rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
-Divides adds the value of the first operand register by the second and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
+Divides the value of the first operand register by the second and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
