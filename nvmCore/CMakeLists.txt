@@ -1,7 +1,8 @@
 project(libnvmCore VERSION 0.1 LANGUAGES CXX)
 
 add_library(nvmCore
-    src/NVMCore.cpp
+    src/Core.cpp
+    src/Options.cpp
 )
 
 target_include_directories(nvmCore

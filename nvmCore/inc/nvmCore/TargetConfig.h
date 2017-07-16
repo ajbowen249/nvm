@@ -7,13 +7,23 @@ Overridable options for targets.
 
 #include <cstdint>
 
+//Declaring these at the global level so they gel with the
+//fixed-width interger types and in case they need to be
+//changed per-platform/compiler one day
+typedef float f32_t;
+typedef double f64_t;
+
+#ifndef NUMGPREGS
+    #define NUMGPREGS 16
+#endif
+
 namespace nvm {
-    #ifdef AS32
-	typedef uint32_t _address_t;
+#ifdef AS32
+	typedef uint32_t address_t;
 #else
     #define AS16
-    typedef uint16_t _address_t;
-    #endif
+    typedef uint16_t address_t;
+#endif
 }
 
 #endif //__TARGETCONFIG_H__
