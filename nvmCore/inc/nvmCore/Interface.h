@@ -6,6 +6,7 @@ Abstract interface for implementing  IO capabilities per-platform.
 */
 
 #include "TargetConfig.h"
+#include "Error.h"
 #include <memory>
 
 namespace nvm {
@@ -14,22 +15,24 @@ namespace nvm {
         typedef std::shared_ptr<Interface> Ptr;
 
 		template <typename tdata>
-		void write(address_t address, tdata data) {
-			write(address, (uint8_t*)(&data), sizeof(data));
+		Error write(address_t address, tdata data) {
+			return write(address, (uint8_t*)(&data), sizeof(data));
 		}
 
 		template <typename tdata>
-		tdata read(address_t address) {
+		ErrorUnion<tdata> read(address_t address) {
 			uint8_t data[sizeof(tdata)];
-			read(address, data, sizeof(tdata));
-			return *(tdata*)(data);
+			auto readError = read(address, data, sizeof(tdata));
+			if (readError) return ErrorUnion<tdata>(readError);
+
+			return ErrorUnion<tdata>(*(tdata*)(data));
 		}
 
 		virtual address_t getMaxMemory() const = 0;
 
 	private:
-		virtual void write(address_t address, const uint8_t data[], address_t width) = 0;
-		virtual void read(address_t address, uint8_t data[], address_t width) = 0;
+		virtual Error write(address_t address, const uint8_t data[], address_t width) = 0;
+		virtual Error read(address_t address, uint8_t data[], address_t width) = 0;
     };
 }
 

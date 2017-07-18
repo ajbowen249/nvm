@@ -8,6 +8,8 @@ The core implementation of the
 #include "Options.h"
 #include "Error.h"
 
+#include <type_traits>
+
 namespace nvm {
 	enum Instruction {
 		NoOp = 0x00,
@@ -27,6 +29,10 @@ namespace nvm {
         Interface::Ptr interface_;
 		Options::Ptr options_;
 
+		bool negativeFlag_;
+		bool positiveFlag_;
+		bool zeroFlag_;
+
 		int8_t i8Registers_[NUMGPREGS];
 		uint8_t ui8Registers_[NUMGPREGS];
 		int16_t i16Registers_[NUMGPREGS];
@@ -40,6 +46,50 @@ namespace nvm {
 		address_t stackPointer_;
 
 		Error fetchAndIncrement(uint8_t instruction[]);
+		Error getTripleRegister(uint8_t instruction[], uint8_t& regCategory, uint8_t& regType, uint8_t& arg1, uint8_t& arg2, uint8_t& arg3);
+
+		template <typename tdata>
+		void setFlags(tdata resultValue) {
+			tdata zero = 0;
+			negativeFlag_ = resultValue < zero;
+			positiveFlag_ = resultValue > zero;
+			zeroFlag_ = resultValue == zero;
+		}
+
+
+#pragma region templated instructions
+		template <typename tdata>
+		void add(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
+			registers[destination] = registers[operand1] + registers[operand2];
+			setFlags(registers[destination]);
+		}
+
+		template <typename tdata>
+		void subtract(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
+			registers[destination] = registers[operand1] - registers[operand2];
+			setFlags(registers[destination]);
+		}
+
+		template <typename tdata>
+		void multiply(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
+			registers[destination] = registers[operand1] * registers[operand2];
+			setFlags(registers[destination]);
+		}
+
+		template <typename tdata>
+		void divide(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
+			registers[destination] = registers[operand1] / registers[operand2];
+			setFlags(registers[destination]);
+		}
+#pragma endregion templated instructions
+
+#pragma region instructions
+		Error noOp();
+		Error add(uint8_t instruction[]);
+		Error subtract(uint8_t instruction[]);
+		Error multiply(uint8_t instruction[]);
+		Error divide(uint8_t instruction[]);
+#pragma endregion instructions
     };
 }
 

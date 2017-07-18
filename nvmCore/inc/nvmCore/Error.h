@@ -8,7 +8,9 @@ Basic error code container.
 namespace nvm {
 	enum class ErrorCategory {
 		None,
-		Configuration
+		Configuration,
+		Instruction,
+		Read
 	};
 
 	enum class ErrorDetail {
@@ -16,7 +18,13 @@ namespace nvm {
 		None,
 		StackSizeGreaterThanMemorySpace,
 		BootVectorGreaterThanMemorySpace,
-		BootVectorInsideStack
+		BootVectorInsideStack,
+
+		//Instruction
+		InvalidOpcode,
+
+		//Read
+		AddressOutOfRange
 	};
 
 	struct Error {
@@ -28,12 +36,31 @@ namespace nvm {
 			category_(category),
 			detail_(detail) { }
 
-		ErrorCategory category_;
-		ErrorDetail detail_;
+		const ErrorCategory category_;
+		const ErrorDetail detail_;
 
 		operator bool() const {
 			return category_ != ErrorCategory::None;
 		}
+
+		Error operator=(const Error& other) {
+			return Error(other);
+		};
+	};
+
+	template <typename tdata>
+	struct ErrorUnion {
+		ErrorUnion() { }
+		ErrorUnion(const Error error) : 
+			error_(error),
+			data_() { }
+
+		ErrorUnion(const tdata data) : 
+			error_(), 
+			data_(data) { }
+
+		const Error error_;
+		const tdata data_;
 	};
 }
 
