@@ -62,7 +62,7 @@ Literally does nothing.
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
-| 00000001 | tttt|rrrr                               | rrrr|rrrr           |
+| 00000001 | tttt rrrr                               | rrrr rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
 Adds the values of the two operand registers and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
@@ -74,7 +74,7 @@ Adds the values of the two operand registers and stores the result in the storag
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
-| 00000010 | tttt|rrrr                               | rrrr|rrrr           |
+| 00000010 | tttt rrrr                               | rrrr rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
 Subtracts the value of the second operand register from the first and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
@@ -86,7 +86,7 @@ Subtracts the value of the second operand register from the first and stores the
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
-| 00000011 | tttt|rrrr                               | rrrr|rrrr           |
+| 00000011 | tttt rrrr                               | rrrr rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
 Multiplies the values of the two operand registers and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
@@ -98,7 +98,7 @@ Multiplies the values of the two operand registers and stores the result in the 
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
-| 00000100 | tttt|rrrr                               | rrrr|rrrr           |
+| 00000100 | tttt rrrr                               | rrrr rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
 Divides the value of the first operand register by the second and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
