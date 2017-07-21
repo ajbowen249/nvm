@@ -21,7 +21,7 @@ typedef double f64_t;
 
 namespace nvm {
 #ifdef AS32
-	typedef uint32_t address_t;
+    typedef uint32_t address_t;
 #else
     #define AS16
     typedef uint16_t address_t;
