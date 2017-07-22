@@ -16,7 +16,8 @@ namespace nvm {
         Add = 0x01,
         Subtract = 0x02,
         Multiply = 0x03,
-        Divide = 0x04
+        Divide = 0x04,
+        SetLiteral = 0x05
     };
 
     class Core {
@@ -45,7 +46,8 @@ namespace nvm {
         address_t instructionPointer_;
         address_t stackPointer_;
 
-        Error fetchAndIncrement(uint8_t instruction[]);
+        Error fetchInstruction(uint8_t instruction[]);
+        Error fetchAndIncrement(uint8_t instruction[], address_t index, address_t toRead);
         Error getTripleRegister(uint8_t instruction[], uint8_t& regCategory, uint8_t& regType, uint8_t& arg1, uint8_t& arg2, uint8_t& arg3);
 
         template <typename tdata>
@@ -81,6 +83,12 @@ namespace nvm {
             registers[destination] = registers[operand1] / registers[operand2];
             setFlags(registers[destination]);
         }
+
+        template <typename tdata>
+        void setLiteral(tdata registers[], uint8_t destination, tdata data) {
+            registers[destination] = data;
+            setFlags(registers[destination]);
+        }
 #pragma endregion templated instructions
 
 #pragma region instructions
@@ -89,6 +97,7 @@ namespace nvm {
         Error subtract(uint8_t instruction[]);
         Error multiply(uint8_t instruction[]);
         Error divide(uint8_t instruction[]);
+        Error setLiteral(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

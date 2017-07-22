@@ -42,12 +42,13 @@ should not be allowed.
 There is a stack that grows from the bottom of memory. The stack pointer a system register, SP, of the unsigned type that matches the configured address space. Pushing to or popping from the stack will decrement or increment the stack pointer by the number of bytes required to store the type being pushed. It is also responsible for keeping track of the instruction pointer across subroutine calls.
 
 ## Instructions
-Instructions range in length from 1 to 3 bytes. 
 
 ### No-Op
 **Mnemonic**: NOP
 
 **Length**: 1
+
+**Affects Flags**: None
 
 | 0        |
 |----------|
@@ -59,6 +60,8 @@ Literally does nothing.
 **Mnemonic**: ADD
 
 **Length**: 3
+
+**Affects Flags**: NPZ
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
@@ -84,6 +87,8 @@ Subtracts the value of the second operand register from the first and stores the
 
 **Length**: 3
 
+**Affects Flags**: NPZ
+
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
 | 00000011 | tttt rrrr                               | rrrr rrrr           |
@@ -96,9 +101,25 @@ Multiplies the values of the two operand registers and stores the result in the 
 
 **Length**: 3
 
+**Affects Flags**: NPZ
+
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
 | 00000100 | tttt rrrr                               | rrrr rrrr           |
 |          | type and number of the storage register | numbers of operands |
 
 Divides the value of the first operand register by the second and stores the result in the storage register, with rollover bahavior defined by the type of the registers.
+
+### Set Literal
+**Mnemonic**: SET
+
+**Length**: variable
+
+**Affects Flags**: NPZ
+
+| 0        | 1                                       | 2..n                |
+|----------|-----------------------------------------|---------------------|
+| 00000101 | tttt rrrr                               | xxxxxxxx            |
+|          | type and number of the storage register | literal value       |
+
+Sets the value of the given value to the literal given value

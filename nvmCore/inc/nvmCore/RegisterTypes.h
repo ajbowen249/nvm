@@ -1,6 +1,8 @@
 #ifndef __REGISTERTYPES_H__
 #define __REGISTERTYPES_H__
 
+#include "TargetConfig.h"
+
 namespace nvm {
     enum RegisterCategory {
         GeneralPurpose = 0x0,
@@ -16,6 +18,15 @@ namespace nvm {
         ui32 = 0x5,
         f32 = 0x6,
         f64 = 0x7
+    };
+
+    class RegisterUtils {
+    public:
+        static address_t getSize(RegisterType type);
+        static RegisterType typeFromLeftNibble(uint8_t byte);
+        static RegisterCategory categoryFromLeftNibble(uint8_t byte);
+        static uint8_t indexFromRightNibble(uint8_t byte);
+        static uint8_t indexFromLeftNibble(uint8_t byte);
     };
 }
 

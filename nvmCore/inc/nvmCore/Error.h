@@ -5,6 +5,12 @@
 Basic error code container.
 */
 
+#define RETURN_IF_ERROR(CALL) \
+{                             \
+    auto err = CALL;          \
+    if (err) return err;      \
+}                             \
+
 namespace nvm {
     enum class ErrorCategory {
         None,
