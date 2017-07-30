@@ -1,31 +1,40 @@
 #include "gtest/gtest.h"
 #include <inMemoryInterface/InMemoryInterface.h>
+#include <testSupport/ObservableCore.h>
 #include <nvmCore/Core.h>
 
 TEST(Add, add1) {
     nvm::Interface::Ptr iface(new nvm::InMemoryInterface(1024));
+    auto inMemoryInterface = (nvm::InMemoryInterface*)(iface.get());
+
     nvm::Options::Ptr options(new nvm::Options());
-    nvm::Core core;
+    nvm::ObservableCore core;
     core.initialize(iface, options);
     core.reset();
 
-    //Set up for 112 + 58
-    iface->write(0x0000, 0x05);// set literal
-    iface->write(0x0001, 0x10);// ui8-0
-    iface->write(0x0002, 0x70);// value 112
+    //112 + 58
+    uint8_t program[] = {
+        0x05, // set literal
+        0x10, // ui8-0
+        0x70, // value 112
 
-    iface->write(0x0003, 0x05);// set literal
-    iface->write(0x0004, 0x11);// ui8-1
-    iface->write(0x0005, 0x3A);// value 58
+        0x05, // set literal
+        0x11, // ui8-1
+        0x3A, // value 58
 
-    iface->write(0x0006, 0x01);// add
-    iface->write(0x0007, 0x12);// ui8-2
-    iface->write(0x0008, 0x01);// 0|1
+        0x01, // add
+        0x12, // ui8-2
+        0x01, // 0|1
+    };
+
+    inMemoryInterface->write(0, program, 9);
 
     //should take exactly 3 process cycles
     core.process();
     core.process();
     core.process();
 
-    EXPECT_TRUE(false);
+    auto result = core.getUi8Register(2);
+
+    EXPECT_EQ(170, result);
 }

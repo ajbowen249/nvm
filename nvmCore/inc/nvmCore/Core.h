@@ -26,14 +26,7 @@ namespace nvm {
         Error process();
         void reset();
 
-    private:
-        Interface::Ptr interface_;
-        Options::Ptr options_;
-
-        bool negativeFlag_;
-        bool positiveFlag_;
-        bool zeroFlag_;
-
+    protected:
         int8_t i8Registers_[NUMGPREGS];
         uint8_t ui8Registers_[NUMGPREGS];
         int16_t i16Registers_[NUMGPREGS];
@@ -42,6 +35,14 @@ namespace nvm {
         uint32_t ui32Registers_[NUMGPREGS];
         f32_t f32Registers_[NUMGPREGS];
         f64_t f64Registers_[NUMGPREGS];
+
+    private:
+        Interface::Ptr interface_;
+        Options::Ptr options_;
+
+        bool negativeFlag_;
+        bool positiveFlag_;
+        bool zeroFlag_;
 
         address_t instructionPointer_;
         address_t stackPointer_;
@@ -57,7 +58,6 @@ namespace nvm {
             positiveFlag_ = resultValue > zero;
             zeroFlag_ = resultValue == zero;
         }
-
 
 #pragma region templated instructions
         template <typename tdata>

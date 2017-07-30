@@ -7,6 +7,7 @@ add_executable(nvmCore_test
 target_link_libraries(nvmCore_test 
     gtest_main
 	inMemoryInterface
+	testSupport
 )
 
 add_test(nvmCore_test 
