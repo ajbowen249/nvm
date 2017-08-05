@@ -49,7 +49,7 @@ void nvm::Core::reset() {
     instructionPointer_ = options_->getBootVector();
     stackPointer_ = interface_->getMaxMemory();
 
-    negativeFlag_, positiveFlag_, zeroFlag_ = false;
+    negativeFlag_, positiveFlag_, zeroFlag_, borrowFlag_, carryFlag_ = false;
 }
 
 nvm::Error nvm::Core::process() {

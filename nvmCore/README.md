@@ -37,6 +37,8 @@ should not be allowed.
 - Negative (N): The result of the previous numeric operation was negative.
 - Positive (P): The result of the previous numeric operation was positive.
 - Zero     (Z): The result of the previous numeric operation was exactly zero.
+- Carry    (C): The previous numeric operation produced an overflow of the type's range.
+- Borrow   (B): The previous numeric operation produced an underflow of the type's range.
 
 ## The Stack
 There is a stack that grows from the bottom of memory. The stack pointer a system register, SP, of the unsigned type that matches the configured address space. Pushing to or popping from the stack will decrement or increment the stack pointer by the number of bytes required to store the type being pushed. It is also responsible for keeping track of the instruction pointer across subroutine calls.
@@ -61,7 +63,7 @@ Literally does nothing.
 
 **Length**: 3
 
-**Affects Flags**: NPZ
+**Affects Flags**: NPZCB
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
@@ -75,6 +77,8 @@ Adds the values of the two operand registers and stores the result in the storag
 
 **Length**: 3
 
+**Affects Flags**: NPZCB
+
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|
 | 00000010 | tttt rrrr                               | rrrr rrrr           |
@@ -87,7 +91,7 @@ Subtracts the value of the second operand register from the first and stores the
 
 **Length**: 3
 
-**Affects Flags**: NPZ
+**Affects Flags**: NPZCB
 
 | 0        | 1                                       | 2                   |
 |----------|-----------------------------------------|---------------------|

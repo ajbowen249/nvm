@@ -36,13 +36,15 @@ namespace nvm {
         f32_t f32Registers_[NUMGPREGS];
         f64_t f64Registers_[NUMGPREGS];
 
-    private:
-        Interface::Ptr interface_;
-        Options::Ptr options_;
-
         bool negativeFlag_;
         bool positiveFlag_;
         bool zeroFlag_;
+        bool borrowFlag_;
+        bool carryFlag_;
+
+    private:
+        Interface::Ptr interface_;
+        Options::Ptr options_;
 
         address_t instructionPointer_;
         address_t stackPointer_;

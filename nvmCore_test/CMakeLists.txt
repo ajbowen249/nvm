@@ -3,7 +3,6 @@ include_directories(${gtest_SOURCE_DIR}/include)
 add_executable(nvmCore_test
     src/BasicTestFixture.cpp
     src/Add.cpp
-    src/Subtract.cpp
 )
 
 target_include_directories(nvmCore

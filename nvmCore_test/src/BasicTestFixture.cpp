@@ -17,3 +17,40 @@ void nvm::test::BasicTestFixture::processIterations(int iterations) {
         core_.process();
     }
 }
+
+nvm::test::ExpectFlags::ExpectFlags(const std::string& flags) :
+    n_(false),
+    z_(false),
+    p_(false),
+    c_(false),
+    b_(false) {
+   for(auto c : flags) {
+       switch (c){
+       case 'N':
+           n_ = true;
+           break;
+       case 'Z':
+           z_ = true;
+           break;
+       case 'P':
+           p_ = true;
+           break;
+       case 'C':
+           c_ = true;
+           break;
+       case 'B':
+           b_ = true;
+           break;
+       default:
+           break;
+       }
+   }
+}
+
+void nvm::test::ExpectFlags::verify(const ObservableCore& core) {
+    EXPECT_EQ(n_, core.getNegativeFlag());
+    EXPECT_EQ(z_, core.getZeroFlag());
+    EXPECT_EQ(p_, core.getPositiveFlag());
+    //EXPECT_EQ(c_, core.getCarryFlag());
+    //EXPECT_EQ(b_, core.getBorrowFlag());
+}

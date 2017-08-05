@@ -4,6 +4,7 @@
 #include "gtest/gtest.h"
 #include <inMemoryInterface/InMemoryInterface.h>
 #include <testSupport/ObservableCore.h>
+#include <string>
 
 namespace nvm {
     namespace test {
@@ -16,6 +17,19 @@ namespace nvm {
             BasicTestFixture();
             virtual void SetUp();
             void processIterations(int iterations);
+        };
+
+        class ExpectFlags {
+        public:
+           ExpectFlags(const std::string& flags);
+           void verify(const ObservableCore& core);
+
+        private:
+           bool n_;
+           bool z_;
+           bool p_;
+           bool c_;
+           bool b_;
         };
     }
 }
