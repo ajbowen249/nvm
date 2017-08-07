@@ -18,8 +18,6 @@ namespace nvm {
         bool getNegativeFlag() const;
         bool getPositiveFlag() const;
         bool getZeroFlag() const;
-        bool getCarryFlag() const;
-        bool getBorrowFlag() const;
     };
 }
 

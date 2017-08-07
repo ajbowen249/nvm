@@ -28,8 +28,6 @@ namespace nvm {
            bool n_;
            bool z_;
            bool p_;
-           bool c_;
-           bool b_;
         };
     }
 }

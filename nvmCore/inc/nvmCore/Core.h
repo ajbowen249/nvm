@@ -39,8 +39,6 @@ namespace nvm {
         bool negativeFlag_;
         bool positiveFlag_;
         bool zeroFlag_;
-        bool borrowFlag_;
-        bool carryFlag_;
 
     private:
         Interface::Ptr interface_;
@@ -54,7 +52,7 @@ namespace nvm {
         Error getTripleRegister(uint8_t instruction[], uint8_t& regCategory, uint8_t& regType, uint8_t& arg1, uint8_t& arg2, uint8_t& arg3);
 
         template <typename tdata>
-        void setFlags(tdata resultValue) {
+        void setResultFlags(tdata resultValue) {
             tdata zero = 0;
             negativeFlag_ = resultValue < zero;
             positiveFlag_ = resultValue > zero;
@@ -65,31 +63,32 @@ namespace nvm {
         template <typename tdata>
         void add(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
             registers[destination] = registers[operand1] + registers[operand2];
-            setFlags(registers[destination]);
+
+            setResultFlags(registers[destination]);
         }
 
         template <typename tdata>
         void subtract(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
             registers[destination] = registers[operand1] - registers[operand2];
-            setFlags(registers[destination]);
+            setResultFlags(registers[destination]);
         }
 
         template <typename tdata>
         void multiply(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
             registers[destination] = registers[operand1] * registers[operand2];
-            setFlags(registers[destination]);
+            setResultFlags(registers[destination]);
         }
 
         template <typename tdata>
         void divide(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
             registers[destination] = registers[operand1] / registers[operand2];
-            setFlags(registers[destination]);
+            setResultFlags(registers[destination]);
         }
 
         template <typename tdata>
         void setLiteral(tdata registers[], uint8_t destination, tdata data) {
             registers[destination] = data;
-            setFlags(registers[destination]);
+            setResultFlags(registers[destination]);
         }
 #pragma endregion templated instructions
 
