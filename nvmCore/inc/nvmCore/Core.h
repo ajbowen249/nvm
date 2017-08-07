@@ -18,7 +18,8 @@ namespace nvm {
         Multiply = 0x03,
         Divide = 0x04,
         SetLiteral = 0x05,
-        FixedUnconditionalJump = 0x06
+        FixedUnconditionalJump = 0x06,
+        FixedLiteralUnconditionalJump = 0x07,
     };
 
     class Core {
@@ -109,6 +110,7 @@ namespace nvm {
         Error divide(uint8_t instruction[]);
         Error setLiteral(uint8_t instruction[]);
         Error fixedUnconditionalJump(uint8_t instruction[]);
+        Error fixedLiteralUnconditionalJump(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

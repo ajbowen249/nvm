@@ -127,7 +127,7 @@ Divides the value of the first operand register by the second and stores the res
 Sets the value of the given value to the literal given value
 
 ### Fixed Unconditional Jump
-**Mnemonic**: JFU
+**Mnemonic**: JFR
 
 **Length**: 2
 
@@ -138,4 +138,18 @@ Sets the value of the given value to the literal given value
 | 00000110 | tttt rrrr                               |
 |          | type and number of the address register |
 
-Jumps the instruction pointer to the address of the given register. This will cause an error if a non-integer register type is given. If a signed register is used and has a negative value, the IP will be given a value relative to the end of the address space. For example, if the value is -12 and the max address is 65535, the IP will jump to 65523. Similarly, a register with a value higher than the max address will roll over continually. For example, a 65536 value in the previous example would roll over to 0.
+Jumps the instruction pointer to the address specified by the given register. This will cause an error if a non-integer register type is given. If a signed register is used and has a negative value, the IP will be given a value relative to the end of the address space. For example, if the value is -12 and the max address is 65535, the IP will jump to 65523. Similarly, a register with a value higher than the max address will roll over continually. For example, a 65536 value in the previous example would roll over to 0.
+
+### Fixed Literal Unconditional Jump
+**Mnemonic**: JFL
+
+**Length**: 1 + width of address
+
+**Affects Flags**: None
+
+| 0        | 1..n                |
+|----------|---------------------|
+| 00000111 | xxxxxxxx            |
+|          | literal value       |
+
+Jumps the instruction pointer to the literal address value. The literal value is assumed to be an unsigned value of a size equal to that of the internal `address_t`. Unlike register-specified jumps, an error will be produced in an attempt to jump beyond the maximum memory address.
