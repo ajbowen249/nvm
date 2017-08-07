@@ -18,6 +18,8 @@ namespace nvm {
         bool getNegativeFlag() const;
         bool getPositiveFlag() const;
         bool getZeroFlag() const;
+
+        address_t getInstructionPointer() const;
     };
 }
 

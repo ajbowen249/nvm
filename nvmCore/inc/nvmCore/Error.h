@@ -28,14 +28,15 @@ namespace nvm {
 
         //Instruction
         InvalidOpcode,
+        UnsupportedRegister,
 
         //Memory
         AddressOutOfRange
     };
 
     struct Error {
-        Error() : 
-            category_(ErrorCategory::None), 
+        Error() :
+            category_(ErrorCategory::None),
             detail_(ErrorDetail::None) { }
 
         Error(ErrorCategory category, ErrorDetail detail) :
@@ -57,12 +58,12 @@ namespace nvm {
     template <typename tdata>
     struct ErrorUnion {
         ErrorUnion() { }
-        ErrorUnion(const Error error) : 
+        ErrorUnion(const Error error) :
             error_(error),
             data_() { }
 
-        ErrorUnion(const tdata data) : 
-            error_(), 
+        ErrorUnion(const tdata data) :
+            error_(),
             data_(data) { }
 
         const Error error_;

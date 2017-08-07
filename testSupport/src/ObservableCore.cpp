@@ -12,3 +12,5 @@ f64_t nvm::ObservableCore::getF64Register(uint8_t index) const { return f64Regis
 bool nvm::ObservableCore::getNegativeFlag() const { return  negativeFlag_; }
 bool nvm::ObservableCore::getPositiveFlag() const { return  positiveFlag_; }
 bool nvm::ObservableCore::getZeroFlag() const { return  zeroFlag_; }
+
+nvm::address_t nvm::ObservableCore::getInstructionPointer() const { return instructionPointer_; }

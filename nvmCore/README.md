@@ -125,3 +125,17 @@ Divides the value of the first operand register by the second and stores the res
 |          | type and number of the storage register | literal value       |
 
 Sets the value of the given value to the literal given value
+
+### Fixed Unconditional Jump
+**Mnemonic**: JFU
+
+**Length**: 2
+
+**Affects Flags**: None
+
+| 0        | 1                                       |
+|----------|-----------------------------------------|
+| 00000110 | tttt rrrr                               |
+|          | type and number of the address register |
+
+Jumps the instruction pointer to the address of the given register. This will cause an error if a non-integer register type is given. If a signed register is used and has a negative value, the IP will be given a value relative to the end of the address space. For example, if the value is -12 and the max address is 65535, the IP will jump to 65523. Similarly, a register with a value higher than the max address will roll over continually. For example, a 65536 value in the previous example would roll over to 0.

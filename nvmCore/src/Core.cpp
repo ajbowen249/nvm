@@ -33,6 +33,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::Multiply: instructionError = multiply(instruction); break;
     case nvm::Instruction::Divide: instructionError = divide(instruction); break;
     case nvm::Instruction::SetLiteral: instructionError = setLiteral(instruction); break;
+    case nvm::Instruction::FixedUnconditionalJump: instructionError = fixedUnconditionalJump(instruction); break;
     default:
         break;
     }
@@ -55,6 +56,8 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
     case nvm::Instruction::SetLiteral:
         RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 1));
         return fetchAndIncrement(instruction, 2, nvm::RegisterUtils::getSize(nvm::RegisterUtils::typeFromLeftNibble(instruction[1])));
+    case nvm::Instruction::FixedUnconditionalJump:
+        return fetchAndIncrement(instruction, 1, 1);
     case nvm::Instruction::NoOp:
         return nvm::Error();
     default:
@@ -130,4 +133,36 @@ nvm::Error nvm::Core::setLiteral(uint8_t instruction[]) {
     return nvm::Error();
 }
 
+nvm::Error nvm::Core::fixedUnconditionalJump(uint8_t instruction[]) {
+    auto regCategory = nvm::RegisterUtils::categoryFromLeftNibble(instruction[1]);
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto address = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    switch (regType)
+    {
+    case nvm::RegisterType::i8:
+        fixedJump(i8Registers_, address);
+        break;
+    case nvm::RegisterType::ui8:
+        fixedJump(ui8Registers_, address);
+        break;
+    case nvm::RegisterType::i16:
+        fixedJump(i16Registers_, address);
+        break;
+    case nvm::RegisterType::ui16:
+        fixedJump(ui16Registers_, address);
+        break;
+    case nvm::RegisterType::i32:
+        fixedJump(i32Registers_, address);
+        break;
+    case nvm::RegisterType::ui32:
+        fixedJump(ui32Registers_, address);
+        break;
+    case nvm::RegisterType::f32:
+    case nvm::RegisterType::f64:
+        return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister);
+    }
+
+    return nvm::Error();
+}
 #pragma endregion instructions
