@@ -38,7 +38,7 @@ nvm::Error nvm::Core::process() {
         break;
     }
 
-    return nvm::Error();
+    return instructionError;
 }
 
 nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {

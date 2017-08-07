@@ -95,7 +95,9 @@ namespace nvm {
 
         template <typename tdata>
         void fixedJump(tdata registers[], uint8_t address) {
-            instructionPointer_ = (0 + registers[address]) % interface_->getMaxMemory();
+            auto max = (uint64_t)interface_->getMaxMemory() + 1;
+            auto addressVal = (int64_t)registers[address];
+            instructionPointer_ = (address_t)(addressVal % max);
         }
 #pragma endregion templated instructions
 

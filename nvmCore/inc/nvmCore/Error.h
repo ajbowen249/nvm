@@ -43,15 +43,16 @@ namespace nvm {
             category_(category),
             detail_(detail) { }
 
-        const ErrorCategory category_;
-        const ErrorDetail detail_;
+        ErrorCategory category_;
+        ErrorDetail detail_;
 
         operator bool() const {
             return category_ != ErrorCategory::None;
         }
 
-        Error operator=(const Error& other) {
-            return Error(other);
+        void operator=(const Error& other) {
+            category_ = other.category_;
+            detail_ = other.detail_;
         };
     };
 
