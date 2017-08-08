@@ -140,6 +140,7 @@ nvm::Error nvm::Core::jump(uint8_t instruction[]) {
     auto jumpCode = instruction[1];
     if(nvm::JumpCode::shouldJump(jumpCode, negativeFlag_, positiveFlag_, zeroFlag_)) {
         long addressOffset;
+        auto isRelative = nvm::JumpCode::isRelative(jumpCode);
         if(nvm::JumpCode::isRegister(jumpCode)) {
             auto registerID = instruction[2];
             auto regCategory = nvm::RegisterUtils::categoryFromLeftNibble(registerID);
@@ -161,10 +162,10 @@ nvm::Error nvm::Core::jump(uint8_t instruction[]) {
         } else {
             nvm::address_t literalAddress = *((nvm::address_t*)&instruction[2]);
             addressOffset = (long)literalAddress;
-            if(nvm::JumpCode::isNegative(jumpCode)) addressOffset *= -1;
+            if(isRelative && nvm::JumpCode::isNegative(jumpCode)) addressOffset *= -1;
         }
 
-        long finalAddress = nvm::JumpCode::isRelative(jumpCode) ?
+        long finalAddress = isRelative ?
             ((long)instructionPointer_) + addressOffset :
             addressOffset;
 
@@ -174,7 +175,7 @@ nvm::Error nvm::Core::jump(uint8_t instruction[]) {
             instructionPointer_ = (nvm::address_t)finalAddress;
         }
     }
-    
+
     return nvm::Error();
 }
 #pragma endregion instructions

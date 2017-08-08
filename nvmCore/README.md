@@ -126,7 +126,7 @@ Divides the value of the first operand register by the second and stores the res
 
 Sets the value of the given value to the literal given value
 
-### Jump (Note:: not yet implemented)
+### Jump
 **Mnemonic**: JMP
 
 **Length**: variable
@@ -146,7 +146,7 @@ Jumps the instruction pointer to a new address based on a set of conditions. The
 
 - 2: Relative Flag. Jump will be relative to the current address if set.
 - 3: Source Flag. If set, the source will be a register. If clear, the source will be a literal value. If using a register source, the next byte is the type and number of the desired register. Attempting to use a register of a floating-point type will cause an error. Otherwise, the next n bytes are a literal address_t.
-- 4: Negative Flag. If the Source Flag is clear and this is set, the literal value will be subtracted from the current address, rather than added. This is ignored if the Source Flag is set.
+- 4: Negative Flag. If the Source Flag is clear and this is set, the literal value will be subtracted from the current address, rather than added. This is ignored if the Source Flag is set or the instruction is not relative.
 - 5: Function (subroutine) Flag. If set, the current instruction pointer address will be pushed to the stack before jumping.
 - 6-7: Reserved bits for future use.
 
