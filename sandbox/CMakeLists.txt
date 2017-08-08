@@ -10,4 +10,5 @@ target_include_directories(sandbox
 
 target_link_libraries(sandbox
     inMemoryInterface
+    testSupport
 )
