@@ -153,3 +153,17 @@ Jumps the instruction pointer to the address specified by the given register. Th
 |          | literal value       |
 
 Jumps the instruction pointer to the literal address value. The literal value is assumed to be an unsigned value of a size equal to that of the internal `address_t`. Unlike register-specified jumps, an error will be produced in an attempt to jump beyond the maximum memory address.
+
+### Fixed Literal Jump If Negative
+**Mnemonic**: JFLN
+
+**Length**: 1 + width of address
+
+**Affects Flags**: None
+
+| 0        | 1..n                |
+|----------|---------------------|
+| 00001000 | xxxxxxxx            |
+|          | literal value       |
+
+Jumps the instruction pointer to the literal address value if the (N)egative flag is set.

@@ -20,6 +20,7 @@ namespace nvm {
         SetLiteral = 0x05,
         FixedUnconditionalJump = 0x06,
         FixedLiteralUnconditionalJump = 0x07,
+        FixedLiteralJumpNegative = 0x08
     };
 
     class Core {
@@ -111,6 +112,7 @@ namespace nvm {
         Error setLiteral(uint8_t instruction[]);
         Error fixedUnconditionalJump(uint8_t instruction[]);
         Error fixedLiteralUnconditionalJump(uint8_t instruction[]);
+        Error fixedLiteralJumpNegative(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

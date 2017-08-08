@@ -35,6 +35,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::SetLiteral: instructionError = setLiteral(instruction); break;
     case nvm::Instruction::FixedUnconditionalJump: instructionError = fixedUnconditionalJump(instruction); break;
     case nvm::Instruction::FixedLiteralUnconditionalJump: instructionError = fixedLiteralUnconditionalJump(instruction); break;
+    case nvm::Instruction::FixedLiteralJumpNegative: instructionError = fixedLiteralJumpNegative(instruction); break;
     default:
         break;
     }
@@ -60,6 +61,7 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
     case nvm::Instruction::FixedUnconditionalJump:
         return fetchAndIncrement(instruction, 1, 1);
     case nvm::Instruction::FixedLiteralUnconditionalJump:
+    case nvm::Instruction::FixedLiteralJumpNegative:
         return fetchAndIncrement(instruction, 1, sizeof(instructionPointer_));
     case nvm::Instruction::NoOp:
         return nvm::Error();
@@ -176,6 +178,19 @@ nvm::Error nvm::Core::fixedLiteralUnconditionalJump(uint8_t instruction[]) {
     }
 
     instructionPointer_ = location;
+    return nvm::Error();
+}
+
+nvm::Error nvm::Core::fixedLiteralJumpNegative(uint8_t instruction[]) {
+    if (negativeFlag_) {
+        auto location = *((address_t*)&instruction[1]);
+        if (location > interface_->getMaxMemory()) {
+            return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
+        }
+
+        instructionPointer_ = location;
+    }
+
     return nvm::Error();
 }
 #pragma endregion instructions

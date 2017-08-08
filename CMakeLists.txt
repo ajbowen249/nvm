@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
-if (MSVC)
+if (WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "/MT")
     set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
-endif (MSVC)
+endif (WIN32)
 
 add_definitions(
     -std=gnu++11

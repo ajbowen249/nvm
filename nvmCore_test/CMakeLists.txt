@@ -5,6 +5,7 @@ add_executable(nvmCore_test
     src/Add.cpp
     src/FixedUnconditionalJump.cpp
     src/FixedLiteralUnconditionalJump.cpp
+    src/FixedLiteralJumpNegative.cpp
 )
 
 target_include_directories(nvmCore
