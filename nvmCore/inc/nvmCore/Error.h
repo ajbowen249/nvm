@@ -13,7 +13,7 @@ Basic error code container.
 
 namespace nvm {
     enum class ErrorCategory {
-        None,
+        None = 0,
         Configuration,
         Instruction,
         Memory
@@ -21,7 +21,7 @@ namespace nvm {
 
     enum class ErrorDetail {
         //Configuration
-        None,
+        None = 0,
         StackSizeGreaterThanMemorySpace,
         BootVectorGreaterThanMemorySpace,
         BootVectorInsideStack,

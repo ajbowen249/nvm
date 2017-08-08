@@ -18,9 +18,7 @@ namespace nvm {
         Multiply = 0x03,
         Divide = 0x04,
         SetLiteral = 0x05,
-        FixedUnconditionalJump = 0x06,
-        FixedLiteralUnconditionalJump = 0x07,
-        FixedLiteralJumpNegative = 0x08
+        Jump = 0x06
     };
 
     class Core {
@@ -94,13 +92,6 @@ namespace nvm {
             registers[destination] = data;
             setResultFlags(registers[destination]);
         }
-
-        template <typename tdata>
-        void fixedJump(tdata registers[], uint8_t address) {
-            auto max = (uint64_t)interface_->getMaxMemory() + 1;
-            auto addressVal = (int64_t)registers[address];
-            instructionPointer_ = (address_t)(addressVal % max);
-        }
 #pragma endregion templated instructions
 
 #pragma region instructions
@@ -110,9 +101,7 @@ namespace nvm {
         Error multiply(uint8_t instruction[]);
         Error divide(uint8_t instruction[]);
         Error setLiteral(uint8_t instruction[]);
-        Error fixedUnconditionalJump(uint8_t instruction[]);
-        Error fixedLiteralUnconditionalJump(uint8_t instruction[]);
-        Error fixedLiteralJumpNegative(uint8_t instruction[]);
+        Error jump(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

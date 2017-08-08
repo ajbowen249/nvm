@@ -3,9 +3,7 @@ include_directories(${gtest_SOURCE_DIR}/include)
 add_executable(nvmCore_test
     src/BasicTestFixture.cpp
     src/Add.cpp
-    src/FixedUnconditionalJump.cpp
-    src/FixedLiteralUnconditionalJump.cpp
-    src/FixedLiteralJumpNegative.cpp
+    src/Jump.cpp
 )
 
 target_include_directories(nvmCore

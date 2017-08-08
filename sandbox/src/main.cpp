@@ -54,8 +54,10 @@ int main(int argc, char** argv) {
     iface->write<uint8_t>(address++, (nvm::RegisterType::i8 << 4) | 0x05); //SUB i85 i81 i82 // test i < 10
     iface->write<uint8_t>(address++, (0x01 << 4) | 0x02);                  //
 
-    iface->write(address++, nvm::Instruction::FixedLiteralJumpNegative); //JFLN loopStart //loop if less than 10
-    iface->write<nvm::address_t>(address++, loopStart);                  //
+    iface->write(address++, nvm::Instruction::Jump);  //
+    iface->write(address++, 0x40);                    //JMP N loopStart //loop if less than 10
+    iface->write<nvm::address_t>(address, loopStart); //
+    address += 2;
 
     while (core.getInstructionPointer() < address) {
         auto error = core.process();

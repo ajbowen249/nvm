@@ -126,44 +126,28 @@ Divides the value of the first operand register by the second and stores the res
 
 Sets the value of the given value to the literal given value
 
-### Fixed Unconditional Jump
-**Mnemonic**: JFR
+### Jump (Note:: not yet implemented)
+**Mnemonic**: JMP
 
-**Length**: 2
-
-**Affects Flags**: None
-
-| 0        | 1                                       |
-|----------|-----------------------------------------|
-| 00000110 | tttt rrrr                               |
-|          | type and number of the address register |
-
-Jumps the instruction pointer to the address specified by the given register. This will cause an error if a non-integer register type is given. If a signed register is used and has a negative value, the IP will be given a value relative to the end of the address space. For example, if the value is -12 and the max address is 65535, the IP will jump to 65523. Similarly, a register with a value higher than the max address will roll over continually. For example, a 65536 value in the previous example would roll over to 0.
-
-### Fixed Literal Unconditional Jump
-**Mnemonic**: JFL
-
-**Length**: 1 + width of address
+**Length**: variable
 
 **Affects Flags**: None
+| 0        | 1                                       | 2..n                |
+|----------|-----------------------------------------|---------------------|
+| 00000110 | cc r s n f RR                           | xxxxxxxx            |
+|          | jump code                               | additional data     |
 
-| 0        | 1..n                |
-|----------|---------------------|
-| 00000111 | xxxxxxxx            |
-|          | literal value       |
+Jumps the instruction pointer to a new address based on a set of conditions. The conditions are determined by the second byte, the jump code. The jump code has the format:
+- 0-1: Condidion Code. These are:
+       00: unconditional (always jump)
+       01: jump if negative
+       10: jump if zero
+       11: jump if positive
 
-Jumps the instruction pointer to the literal address value. The literal value is assumed to be an unsigned value of a size equal to that of the internal `address_t`. Unlike register-specified jumps, an error will be produced in an attempt to jump beyond the maximum memory address.
+- 2: Relative Flag. Jump will be relative to the current address if set.
+- 3: Source Flag. If set, the source will be a register. If clear, the source will be a literal value. If using a register source, the next byte is the type and number of the desired register. Attempting to use a register of a floating-point type will cause an error. Otherwise, the next n bytes are a literal address_t.
+- 4: Negative Flag. If the Source Flag is clear and this is set, the literal value will be subtracted from the current address, rather than added. This is ignored if the Source Flag is set.
+- 5: Function (subroutine) Flag. If set, the current instruction pointer address will be pushed to the stack before jumping.
+- 6-7: Reserved bits for future use.
 
-### Fixed Literal Jump If Negative
-**Mnemonic**: JFLN
-
-**Length**: 1 + width of address
-
-**Affects Flags**: None
-
-| 0        | 1..n                |
-|----------|---------------------|
-| 00001000 | xxxxxxxx            |
-|          | literal value       |
-
-Jumps the instruction pointer to the literal address value if the (N)egative flag is set.
+Attempts to jump beyond the addressible memory range will result in an error.

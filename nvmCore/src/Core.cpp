@@ -1,6 +1,7 @@
 #include "nvmCore/Core.h"
 #include "nvmCore/CoreMacros.h"
 #include "nvmCore/RegisterTypes.h"
+#include "nvmCore/JumpCode.h"
 
 nvm::Error nvm::Core::initialize(nvm::Interface::Ptr machineInterface, nvm::Options::Ptr options) { 
     interface_ = machineInterface;
@@ -33,9 +34,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::Multiply: instructionError = multiply(instruction); break;
     case nvm::Instruction::Divide: instructionError = divide(instruction); break;
     case nvm::Instruction::SetLiteral: instructionError = setLiteral(instruction); break;
-    case nvm::Instruction::FixedUnconditionalJump: instructionError = fixedUnconditionalJump(instruction); break;
-    case nvm::Instruction::FixedLiteralUnconditionalJump: instructionError = fixedLiteralUnconditionalJump(instruction); break;
-    case nvm::Instruction::FixedLiteralJumpNegative: instructionError = fixedLiteralJumpNegative(instruction); break;
+    case nvm::Instruction::Jump: instructionError = jump(instruction); break;
     default:
         break;
     }
@@ -58,11 +57,9 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
     case nvm::Instruction::SetLiteral:
         RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 1));
         return fetchAndIncrement(instruction, 2, nvm::RegisterUtils::getSize(nvm::RegisterUtils::typeFromLeftNibble(instruction[1])));
-    case nvm::Instruction::FixedUnconditionalJump:
-        return fetchAndIncrement(instruction, 1, 1);
-    case nvm::Instruction::FixedLiteralUnconditionalJump:
-    case nvm::Instruction::FixedLiteralJumpNegative:
-        return fetchAndIncrement(instruction, 1, sizeof(instructionPointer_));
+    case nvm::Instruction::Jump:
+        RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 1));
+        return fetchAndIncrement(instruction, 2, nvm::JumpCode::getSize(instruction[1]));
     case nvm::Instruction::NoOp:
         return nvm::Error();
     default:
@@ -138,59 +135,46 @@ nvm::Error nvm::Core::setLiteral(uint8_t instruction[]) {
     return nvm::Error();
 }
 
-nvm::Error nvm::Core::fixedUnconditionalJump(uint8_t instruction[]) {
-    auto regCategory = nvm::RegisterUtils::categoryFromLeftNibble(instruction[1]);
-    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
-    auto address = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+nvm::Error nvm::Core::jump(uint8_t instruction[]) {
+    //TODO: Push IP to stack if necessary
+    auto jumpCode = instruction[1];
+    if(nvm::JumpCode::shouldJump(jumpCode, negativeFlag_, positiveFlag_, zeroFlag_)) {
+        long addressOffset;
+        if(nvm::JumpCode::isRegister(jumpCode)) {
+            auto registerID = instruction[2];
+            auto regCategory = nvm::RegisterUtils::categoryFromLeftNibble(registerID);
+            auto regType = nvm::RegisterUtils::typeFromLeftNibble(registerID);
+            auto address = nvm::RegisterUtils::indexFromRightNibble(registerID);
 
-    switch (regType)
-    {
-    case nvm::RegisterType::i8:
-        fixedJump(i8Registers_, address);
-        break;
-    case nvm::RegisterType::ui8:
-        fixedJump(ui8Registers_, address);
-        break;
-    case nvm::RegisterType::i16:
-        fixedJump(i16Registers_, address);
-        break;
-    case nvm::RegisterType::ui16:
-        fixedJump(ui16Registers_, address);
-        break;
-    case nvm::RegisterType::i32:
-        fixedJump(i32Registers_, address);
-        break;
-    case nvm::RegisterType::ui32:
-        fixedJump(ui32Registers_, address);
-        break;
-    case nvm::RegisterType::f32:
-    case nvm::RegisterType::f64:
-        return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister);
-    }
-
-    return nvm::Error();
-}
-
-nvm::Error nvm::Core::fixedLiteralUnconditionalJump(uint8_t instruction[]) {
-    auto location = *((address_t*)&instruction[1]);
-    if(location > interface_->getMaxMemory()) {
-        return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
-    }
-
-    instructionPointer_ = location;
-    return nvm::Error();
-}
-
-nvm::Error nvm::Core::fixedLiteralJumpNegative(uint8_t instruction[]) {
-    if (negativeFlag_) {
-        auto location = *((address_t*)&instruction[1]);
-        if (location > interface_->getMaxMemory()) {
-            return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
+            switch (regType)
+            {
+            case nvm::RegisterType::i8: addressOffset = (long)i8Registers_[address]; break;
+            case nvm::RegisterType::ui8: addressOffset = (long)ui8Registers_[address]; break;
+            case nvm::RegisterType::i16: addressOffset = (long)i16Registers_[address]; break;
+            case nvm::RegisterType::ui16: addressOffset = (long)ui16Registers_[address]; break;
+            case nvm::RegisterType::i32: addressOffset = (long)i32Registers_[address]; break;
+            case nvm::RegisterType::ui32: addressOffset = (long)ui32Registers_[address]; break;
+            case nvm::RegisterType::f32:
+            case nvm::RegisterType::f64:
+                return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister);
+            }
+        } else {
+            nvm::address_t literalAddress = *((nvm::address_t*)&instruction[2]);
+            addressOffset = (long)literalAddress;
+            if(nvm::JumpCode::isNegative(jumpCode)) addressOffset *= -1;
         }
 
-        instructionPointer_ = location;
-    }
+        long finalAddress = nvm::JumpCode::isRelative(jumpCode) ?
+            ((long)instructionPointer_) + addressOffset :
+            addressOffset;
 
+        if(finalAddress > interface_->getMaxMemory() || finalAddress < 0) {
+            return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
+        } else {
+            instructionPointer_ = (nvm::address_t)finalAddress;
+        }
+    }
+    
     return nvm::Error();
 }
 #pragma endregion instructions
