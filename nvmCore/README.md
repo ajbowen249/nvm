@@ -132,10 +132,11 @@ Sets the value of the given value to the literal given value
 **Length**: variable
 
 **Affects Flags**: None
-| 0        | 1                                       | 2..n                |
-|----------|-----------------------------------------|---------------------|
-| 00000110 | cc r s n f RR                           | xxxxxxxx            |
-|          | jump code                               | additional data     |
+
+| 0        | 1             | 2..n            |
+|----------|---------------|-----------------|
+| 00000110 | cc r s n f RR | xxxxxxxx        |
+|          | jump code     | additional data |
 
 Jumps the instruction pointer to a new address based on a set of conditions. The conditions are determined by the second byte, the jump code. The jump code has the format:
 - 0-1: Condidion Code. These are:

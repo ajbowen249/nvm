@@ -136,7 +136,6 @@ nvm::Error nvm::Core::setLiteral(uint8_t instruction[]) {
 }
 
 nvm::Error nvm::Core::jump(uint8_t instruction[]) {
-    //TODO: Push IP to stack if necessary
     auto jumpCode = instruction[1];
     if(nvm::JumpCode::shouldJump(jumpCode, negativeFlag_, positiveFlag_, zeroFlag_)) {
         long addressOffset;
@@ -171,9 +170,13 @@ nvm::Error nvm::Core::jump(uint8_t instruction[]) {
 
         if(finalAddress > interface_->getMaxMemory() || finalAddress < 0) {
             return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
-        } else {
-            instructionPointer_ = (nvm::address_t)finalAddress;
         }
+
+        if(nvm::JumpCode::isSubroutine(jumpCode)) {
+            pushStack(instructionPointer_);
+        }
+
+        instructionPointer_ = (nvm::address_t)finalAddress;
     }
 
     return nvm::Error();
