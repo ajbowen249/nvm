@@ -199,3 +199,18 @@ TEST_F(JumpTest, DontJumpZero) {
     processIterations(2);
     EXPECT_EQ(address, core_.getInstructionPointer());
 }
+
+TEST_F(JumpTest, UnconditionalSubroutine) {
+    nvm::address_t address = 0;
+    iface_->write(address++, nvm::Instruction::Jump);
+    iface_->write(address++, 0x04);
+    iface_->write<nvm::address_t>(address, 0x02FF);
+    address += 2;
+
+    processIterations(1);
+    EXPECT_EQ(0x02FF, core_.getInstructionPointer());
+
+    auto stackPeek = core_.peekStack<nvm::address_t>();
+    EXPECT_FALSE(stackPeek.error_);
+    EXPECT_EQ(stackPeek.data_, address);
+}

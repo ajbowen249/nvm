@@ -20,6 +20,11 @@ namespace nvm {
         bool getZeroFlag() const;
 
         address_t getInstructionPointer() const;
+
+        template <typename tdata>
+        ErrorUnion<tdata> peekStack() {
+            return scrapeStack<tdata>(false);
+        }
     };
 }
 

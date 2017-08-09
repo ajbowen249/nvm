@@ -61,7 +61,7 @@ namespace nvm {
             zeroFlag_ = resultValue == zero;
         }
 
-#pragma region templated instructions
+#pragma region templated utils
         template <typename tdata>
         void add(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
             registers[destination] = registers[operand1] + registers[operand2];
@@ -92,7 +92,41 @@ namespace nvm {
             registers[destination] = data;
             setResultFlags(registers[destination]);
         }
-#pragma endregion templated instructions
+
+        template <typename tdata>
+        Error pushStack(tdata value) {
+            auto newStackPointer = stackPointer_ - sizeof(value);
+
+            if(newStackPointer < interface_->getMaxMemory() - options_->getStackSize()) {
+                return Error(ErrorCategory::Memory, ErrorDetail::StackOverflow);
+            }
+
+            stackPointer_ = newStackPointer;
+            return interface_->write(stackPointer_, value);
+        }
+
+        template <typename tdata>
+        ErrorUnion<tdata> scrapeStack(bool pop) {
+            auto newStackPointer = stackPointer_ + sizeof(tdata);
+
+            if(newStackPointer > interface_->getMaxMemory()) {
+                return Error(ErrorCategory::Memory, ErrorDetail::StackUnderflow);
+            }
+
+            auto readResult = interface_->read<tdata>(stackPointer_);
+
+            if(pop) {
+                stackPointer_ = newStackPointer;
+            }
+
+            return readResult;
+        }
+
+        template <typename tdata>
+        ErrorUnion<tdata> popStack() {
+            return scrapeStack<tdata>(true);
+        }
+#pragma endregion templated utils
 
 #pragma region instructions
         Error noOp();

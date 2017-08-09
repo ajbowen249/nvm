@@ -31,7 +31,9 @@ namespace nvm {
         UnsupportedRegister,
 
         //Memory
-        AddressOutOfRange
+        AddressOutOfRange,
+        StackOverflow,
+        StackUnderflow
     };
 
     struct Error {
