@@ -18,7 +18,8 @@ namespace nvm {
         Multiply = 0x03,
         Divide = 0x04,
         SetLiteral = 0x05,
-        Jump = 0x06
+        Jump = 0x06,
+        Return = 0x07
     };
 
     class Core {
@@ -43,6 +44,23 @@ namespace nvm {
 
         address_t instructionPointer_;
 
+        template <typename tdata>
+        ErrorUnion<tdata> scrapeStack(bool pop) {
+            auto newStackPointer = stackPointer_ + sizeof(tdata);
+
+            if (newStackPointer > interface_->getMaxMemory()) {
+                return Error(ErrorCategory::Memory, ErrorDetail::StackUnderflow);
+            }
+
+            auto readResult = interface_->read<tdata>(stackPointer_);
+
+            if (pop) {
+                stackPointer_ = newStackPointer;
+            }
+
+            return readResult;
+        }
+
     private:
         Interface::Ptr interface_;
         Options::Ptr options_;
@@ -61,7 +79,6 @@ namespace nvm {
             zeroFlag_ = resultValue == zero;
         }
 
-#pragma region templated utils
         template <typename tdata>
         void add(tdata registers[], uint8_t destination, uint8_t operand1, uint8_t operand2) {
             registers[destination] = registers[operand1] + registers[operand2];
@@ -106,27 +123,9 @@ namespace nvm {
         }
 
         template <typename tdata>
-        ErrorUnion<tdata> scrapeStack(bool pop) {
-            auto newStackPointer = stackPointer_ + sizeof(tdata);
-
-            if(newStackPointer > interface_->getMaxMemory()) {
-                return Error(ErrorCategory::Memory, ErrorDetail::StackUnderflow);
-            }
-
-            auto readResult = interface_->read<tdata>(stackPointer_);
-
-            if(pop) {
-                stackPointer_ = newStackPointer;
-            }
-
-            return readResult;
-        }
-
-        template <typename tdata>
         ErrorUnion<tdata> popStack() {
             return scrapeStack<tdata>(true);
         }
-#pragma endregion templated utils
 
 #pragma region instructions
         Error noOp();
@@ -136,6 +135,7 @@ namespace nvm {
         Error divide(uint8_t instruction[]);
         Error setLiteral(uint8_t instruction[]);
         Error jump(uint8_t instruction[]);
+        Error ret(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

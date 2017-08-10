@@ -3,8 +3,22 @@
     {
       "buildRoot": "${env.LOCALAPPDATA}\\CMakeBuild\\${workspaceHash}\\build\\${name}",
       "cmakeCommandArgs": "",
+      "configurationType": "Debug",
       "generator": "Visual Studio 15 2017",
-      "name": "default-config",
+      "name": "Debug",
+      "variables": [
+        {
+          "name": "VARIABLE",
+          "value": "value"
+        }
+      ]
+    },
+    {
+      "buildRoot": "${env.LOCALAPPDATA}\\CMakeBuild\\${workspaceHash}\\build\\${name}",
+      "cmakeCommandArgs": "",
+      "configurationType": "MinSizeRel",
+      "generator": "Visual Studio 15 2017",
+      "name": "Release",
       "variables": [
         {
           "name": "VARIABLE",
@@ -12,5 +26,5 @@
         }
       ]
     }
- ]
+  ]
 }

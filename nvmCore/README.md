@@ -152,3 +152,17 @@ Jumps the instruction pointer to a new address based on a set of conditions. The
 - 6-7: Reserved bits for future use.
 
 Attempts to jump beyond the addressible memory range will result in an error.
+
+### Return
+**Mnemonic**: RET
+
+**Length**: 1
+
+**Affects Flags**: None
+
+| 0        |
+|----------|
+| 00000111 |
+|          |
+
+Pops an address_t from the stack and jumps the instruction pointer there. Executing this with an empty stack or with an address outside the addressible memory range will cause an error.

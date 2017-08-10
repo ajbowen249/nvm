@@ -1,5 +1,3 @@
-project(sandbox VERSION 0.1 LANGUAGES CXX)
-
 add_executable(sandbox
     src/main.cpp
 )

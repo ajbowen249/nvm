@@ -35,6 +35,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::Divide: instructionError = divide(instruction); break;
     case nvm::Instruction::SetLiteral: instructionError = setLiteral(instruction); break;
     case nvm::Instruction::Jump: instructionError = jump(instruction); break;
+    case nvm::Instruction::Return: instructionError = ret(instruction); break;
     default:
         break;
     }
@@ -61,6 +62,7 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
         RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 1));
         return fetchAndIncrement(instruction, 2, nvm::JumpCode::getSize(instruction[1]));
     case nvm::Instruction::NoOp:
+    case nvm::Instruction::Return:
         return nvm::Error();
     default:
         return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::InvalidOpcode);
@@ -181,4 +183,16 @@ nvm::Error nvm::Core::jump(uint8_t instruction[]) {
 
     return nvm::Error();
 }
+
+nvm::Error nvm::Core::ret(uint8_t instruction[]) {
+    auto address = popStack<nvm::address_t>();
+    if (address.error_) {
+        return address.error_;
+    }
+
+    instructionPointer_ = address.data_;
+
+    return nvm::Error();
+}
+
 #pragma endregion instructions
