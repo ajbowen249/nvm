@@ -1,7 +1,7 @@
 #include "nvmCore/Core.h"
 #include "nvmCore/CoreMacros.h"
 #include "nvmCore/RegisterTypes.h"
-#include "nvmCore/JumpCode.h"
+#include "nvmCore/IXFlags.h"
 
 nvm::Error nvm::Core::initialize(nvm::Interface::Ptr machineInterface, nvm::Options::Ptr options) { 
     interface_ = machineInterface;
@@ -38,6 +38,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::Return: instructionError = ret(instruction); break;
     case nvm::Instruction::Increment: instructionError = increment(instruction); break;
     case nvm::Instruction::Decrement: instructionError = decrement(instruction); break;
+    case nvm::Instruction::Read: instructionError = read(instruction); break;
     default:
         break;
     }
@@ -63,6 +64,9 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
     case nvm::Instruction::Jump:
         RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 1));
         return fetchAndIncrement(instruction, 2, nvm::JumpCode::getSize(instruction[1]));
+    case nvm::Instruction::Read:
+        RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 2));
+        return fetchAndIncrement(instruction, 3, nvm::RWCode::getSize(instruction[2]));
     case nvm::Instruction::Increment:
     case nvm::Instruction::Decrement:
         return fetchAndIncrement(instruction, 1, 1);
@@ -215,6 +219,61 @@ nvm::Error nvm::Core::decrement(uint8_t instruction[]) {
     auto destination = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
 
     REGISTER_ARRAY_FUNC(regCategory, regType, decrement, destination);
+    return nvm::Error();
+}
+
+nvm::Error nvm::Core::read(uint8_t instruction[]) {
+    long sourceAddress;
+    if (nvm::RWCode::isRegisterSource(instruction[2])) {
+
+    } else {
+        sourceAddress = *((nvm::address_t*)&instruction[3]);
+    }
+
+    if (sourceAddress > interface_->getMaxMemory() || sourceAddress < 0) {
+        return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
+    }
+
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto destination = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    auto finalAddress = (address_t)sourceAddress;
+
+    switch (regType) {
+    case nvm::RegisterType::i8: {
+        auto readResult = interface_->read<int8_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        i8Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::ui8: {
+        auto readResult = interface_->read<uint8_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        ui8Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::i16: {
+        auto readResult = interface_->read<int16_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        i16Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::ui16: {
+        auto readResult = interface_->read<uint16_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        ui16Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::i32: {
+        auto readResult = interface_->read<int32_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        i32Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::ui32: {
+        auto readResult = interface_->read<uint32_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        ui32Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::f32: {
+        auto readResult = interface_->read<f32_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        f32Registers_[destination] = readResult.data_; }
+    case nvm::RegisterType::f64: {
+        auto readResult = interface_->read<f64_t>(finalAddress);
+        RETURN_IF_ERROR(readResult.error_);
+        f64Registers_[destination] = readResult.data_; }
+    }
+
     return nvm::Error();
 }
 

@@ -29,3 +29,19 @@ bool nvm::JumpCode::shouldJump(uint8_t jumpCode, bool negativeFlag, bool positiv
         case 0xC0: return positiveFlag;
     }
 }
+
+nvm::address_t nvm::RWCode::getSize(uint8_t rwCode) {
+    return isRegisterSource(rwCode) ? 1 : sizeof(nvm::address_t);
+}
+
+bool nvm::RWCode::isRegisterSource(uint8_t rwCode) {
+    return rwCode & 0x80;
+}
+
+bool nvm::RWCode::addRegisters(uint8_t rwCode) {
+    return rwCode & 0xC0;
+}
+
+nvm::RegisterType nvm::RWCode::getSourceRegisterType(uint8_t rwCode) {
+    return (nvm::RegisterType)(rwCode & 0x0F);
+}

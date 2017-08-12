@@ -4,7 +4,7 @@ add_library(nvmCore
     src/Core.cpp
     src/Options.cpp
     src/RegisterTypes.cpp
-    src/JumpCode.cpp
+    src/IXFlags.cpp
 )
 
 target_include_directories(nvmCore

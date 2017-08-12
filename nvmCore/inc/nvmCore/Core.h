@@ -21,7 +21,8 @@ namespace nvm {
         Jump = 0x06,
         Return = 0x07,
         Increment = 0x08,
-        Decrement = 0x09
+        Decrement = 0x09,
+        Read = 0x0A
     };
 
     class Core {
@@ -154,6 +155,7 @@ namespace nvm {
         Error ret(uint8_t instruction[]);
         Error increment(uint8_t instruction[]);
         Error decrement(uint8_t instruction[]);
+        Error read(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

@@ -16,11 +16,19 @@ namespace nvm {
 
         template <typename tdata>
         Error write(address_t address, tdata data) {
+            if (address > getMaxMemory()) {
+                return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
+            }
+
             return write(address, (uint8_t*)(&data), sizeof(data));
         }
 
         template <typename tdata>
         ErrorUnion<tdata> read(address_t address) {
+            if (address > getMaxMemory()) {
+                return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
+            }
+
             uint8_t data[sizeof(tdata)];
             auto readError = read(address, data, sizeof(tdata));
             if (readError) return ErrorUnion<tdata>(readError);
