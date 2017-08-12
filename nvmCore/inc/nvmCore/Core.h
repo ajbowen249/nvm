@@ -19,7 +19,9 @@ namespace nvm {
         Divide = 0x04,
         SetLiteral = 0x05,
         Jump = 0x06,
-        Return = 0x07
+        Return = 0x07,
+        Increment = 0x08,
+        Decrement = 0x09
     };
 
     class Core {
@@ -127,6 +129,20 @@ namespace nvm {
             return scrapeStack<tdata>(true);
         }
 
+        template <typename tdata>
+        void increment(tdata registers[], uint8_t destination) {
+            registers[destination]++;
+
+            setResultFlags(registers[destination]);
+        }
+
+        template <typename tdata>
+        void decrement(tdata registers[], uint8_t destination) {
+            registers[destination]--;
+
+            setResultFlags(registers[destination]);
+        }
+
 #pragma region instructions
         Error noOp();
         Error add(uint8_t instruction[]);
@@ -136,6 +152,8 @@ namespace nvm {
         Error setLiteral(uint8_t instruction[]);
         Error jump(uint8_t instruction[]);
         Error ret(uint8_t instruction[]);
+        Error increment(uint8_t instruction[]);
+        Error decrement(uint8_t instruction[]);
 #pragma endregion instructions
     };
 }

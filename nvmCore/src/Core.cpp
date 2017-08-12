@@ -36,6 +36,8 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::SetLiteral: instructionError = setLiteral(instruction); break;
     case nvm::Instruction::Jump: instructionError = jump(instruction); break;
     case nvm::Instruction::Return: instructionError = ret(instruction); break;
+    case nvm::Instruction::Increment: instructionError = increment(instruction); break;
+    case nvm::Instruction::Decrement: instructionError = decrement(instruction); break;
     default:
         break;
     }
@@ -61,6 +63,9 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
     case nvm::Instruction::Jump:
         RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 1));
         return fetchAndIncrement(instruction, 2, nvm::JumpCode::getSize(instruction[1]));
+    case nvm::Instruction::Increment:
+    case nvm::Instruction::Decrement:
+        return fetchAndIncrement(instruction, 1, 1);
     case nvm::Instruction::NoOp:
     case nvm::Instruction::Return:
         return nvm::Error();
@@ -192,6 +197,24 @@ nvm::Error nvm::Core::ret(uint8_t instruction[]) {
 
     instructionPointer_ = address.data_;
 
+    return nvm::Error();
+}
+
+nvm::Error nvm::Core::increment(uint8_t instruction[]) {
+    auto regCategory = nvm::RegisterUtils::categoryFromLeftNibble(instruction[1]);
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto destination = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    REGISTER_ARRAY_FUNC(regCategory, regType, increment, destination);
+    return nvm::Error();
+}
+
+nvm::Error nvm::Core::decrement(uint8_t instruction[]) {
+    auto regCategory = nvm::RegisterUtils::categoryFromLeftNibble(instruction[1]);
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto destination = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    REGISTER_ARRAY_FUNC(regCategory, regType, decrement, destination);
     return nvm::Error();
 }
 

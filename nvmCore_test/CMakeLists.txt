@@ -5,6 +5,8 @@ add_executable(nvmCore_test
     src/Add.cpp
     src/Jump.cpp
     src/Return.cpp
+    src/Increment.cpp
+    src/Decrement.cpp
 )
 
 target_include_directories(nvmCore

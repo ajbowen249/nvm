@@ -166,3 +166,31 @@ Attempts to jump beyond the addressible memory range will result in an error.
 |          |
 
 Pops an address_t from the stack and jumps the instruction pointer there. Executing this with an empty stack or with an address outside the addressible memory range will cause an error.
+
+### Increment
+**Mnemonic**: INC
+
+**Length**: 2
+
+**Affects Flags**: NPZ
+
+| 0        | 1                               |
+|----------|---------------------------------|
+| 00001000 | tttt rrrr                       |
+|          | type and number of the register |
+
+Increments the value of the given register by 1.
+
+### Decrement
+**Mnemonic**: DEC
+
+**Length**: 2
+
+**Affects Flags**: NPZ
+
+| 0        | 1                               |
+|----------|---------------------------------|
+| 00001001 | tttt rrrr                       |
+|          | type and number of the register |
+
+Decrements the value of the given register by 1.

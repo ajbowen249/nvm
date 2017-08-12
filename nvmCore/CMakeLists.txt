@@ -9,5 +9,5 @@ add_library(nvmCore
 
 target_include_directories(nvmCore
     PUBLIC inc
-    PUBLIC inc_priv
+    PRIVATE inc_priv
 )
