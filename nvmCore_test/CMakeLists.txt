@@ -7,6 +7,7 @@ add_executable(nvmCore_test
     src/Return.cpp
     src/Increment.cpp
     src/Decrement.cpp
+    src/Read.cpp
 )
 
 target_include_directories(nvmCore
