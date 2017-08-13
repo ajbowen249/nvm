@@ -74,6 +74,7 @@ namespace nvm {
         Error fetchInstruction(uint8_t instruction[]);
         Error fetchAndIncrement(uint8_t instruction[], address_t index, address_t toRead);
         Error getTripleRegister(uint8_t instruction[], uint8_t& regCategory, uint8_t& regType, uint8_t& arg1, uint8_t& arg2, uint8_t& arg3);
+        ErrorUnion<address_t> getRWAddress(uint8_t instruction[]);
 
         template <typename tdata>
         void setResultFlags(tdata resultValue) {

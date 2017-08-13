@@ -102,6 +102,62 @@ nvm::Error nvm::Core::getTripleRegister(uint8_t instruction[], uint8_t& regCateg
     return nvm::Error();
 }
 
+nvm::ErrorUnion<nvm::address_t> nvm::Core::getRWAddress(uint8_t instruction[]) {
+    auto rwCode = instruction[2];
+    long address;
+    if (nvm::RWCode::isRegisterSource(rwCode)) {
+        auto sourceRegType = nvm::RWCode::getSourceRegisterType(rwCode);
+        auto index1 = nvm::RegisterUtils::indexFromLeftNibble(instruction[3]);
+        auto index2 = nvm::RegisterUtils::indexFromRightNibble(instruction[3]);
+        long addAddress;
+
+        switch (sourceRegType) {
+        case nvm::RegisterType::i8:
+            address = (long)i8Registers_[index1];
+            addAddress = (long)i8Registers_[index2];
+            break;
+        case nvm::RegisterType::ui8:
+            address = (long)ui8Registers_[index1];
+            addAddress = (long)ui8Registers_[index2];
+            break;
+        case nvm::RegisterType::i16:
+            address = (long)i16Registers_[index1];
+            addAddress = (long)i16Registers_[index2];
+            break;
+        case nvm::RegisterType::ui16:
+            address = (long)ui16Registers_[index1];
+            addAddress = (long)ui16Registers_[index2];
+            break;
+        case nvm::RegisterType::i32:
+            address = (long)i32Registers_[index1];
+            addAddress = (long)i32Registers_[index2];
+            break;
+        case nvm::RegisterType::ui32:
+            address = (long)ui32Registers_[index1];
+            addAddress = (long)ui32Registers_[index2];
+            break;
+        case nvm::RegisterType::f32:
+        case nvm::RegisterType::f64:
+            return nvm::ErrorUnion<nvm::address_t>(nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister));
+        }
+
+        if (nvm::RWCode::addRegisters(rwCode)) {
+            address += addAddress;
+        }
+    } else {
+        address = *((nvm::address_t*)&instruction[3]);
+    }
+
+    if (address > interface_->getMaxMemory() || address < 0) {
+        return nvm::ErrorUnion<nvm::address_t>(nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange));
+    }
+
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto source = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    return nvm::ErrorUnion<nvm::address_t>((address_t)address);
+}
+
 #pragma region instructions
 nvm::Error nvm::Core::noOp() {
     return nvm::Error();
@@ -225,59 +281,13 @@ nvm::Error nvm::Core::decrement(uint8_t instruction[]) {
 }
 
 nvm::Error nvm::Core::read(uint8_t instruction[]) {
-    auto rwCode = instruction[2];
-    long sourceAddress;
-    if (nvm::RWCode::isRegisterSource(rwCode)) {
-        auto sourceRegType = nvm::RWCode::getSourceRegisterType(rwCode);
-        auto index1 = nvm::RegisterUtils::indexFromLeftNibble(instruction[3]);
-        auto index2 = nvm::RegisterUtils::indexFromRightNibble(instruction[3]);
-        long addAddress;
-
-        switch (sourceRegType) {
-        case nvm::RegisterType::i8:
-            sourceAddress = (long)i8Registers_[index1];
-            addAddress = (long)i8Registers_[index2];
-            break;
-        case nvm::RegisterType::ui8:
-            sourceAddress = (long)ui8Registers_[index1];
-            addAddress = (long)ui8Registers_[index2];
-            break;
-        case nvm::RegisterType::i16:
-            sourceAddress = (long)i16Registers_[index1];
-            addAddress = (long)i16Registers_[index2];
-            break;
-        case nvm::RegisterType::ui16:
-            sourceAddress = (long)ui16Registers_[index1];
-            addAddress = (long)ui16Registers_[index2];
-            break;
-        case nvm::RegisterType::i32:
-            sourceAddress = (long)i32Registers_[index1];
-            addAddress = (long)i32Registers_[index2];
-            break;
-        case nvm::RegisterType::ui32:
-            sourceAddress = (long)ui32Registers_[index1];
-            addAddress = (long)ui32Registers_[index2];
-            break;
-        case nvm::RegisterType::f32:
-        case nvm::RegisterType::f64:
-            return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister);
-        }
-
-        if (nvm::RWCode::addRegisters(rwCode)) {
-            sourceAddress += addAddress;
-        }
-    } else {
-        sourceAddress = *((nvm::address_t*)&instruction[3]);
-    }
-
-    if (sourceAddress > interface_->getMaxMemory() || sourceAddress < 0) {
-        return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
-    }
-
     auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
     auto destination = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
 
-    auto finalAddress = (address_t)sourceAddress;
+    auto maybeFinalAddress = getRWAddress(instruction);
+    RETURN_IF_ERROR(maybeFinalAddress.error_);
+
+    auto finalAddress = maybeFinalAddress.data_;
 
     switch (regType) {
     case nvm::RegisterType::i8: {
@@ -334,59 +344,13 @@ nvm::Error nvm::Core::read(uint8_t instruction[]) {
 }
 
 nvm::Error nvm::Core::write(uint8_t instruction[]) {
-    auto rwCode = instruction[2];
-    long destinationAddress;
-    if (nvm::RWCode::isRegisterSource(rwCode)) {
-        auto sourceRegType = nvm::RWCode::getSourceRegisterType(rwCode);
-        auto index1 = nvm::RegisterUtils::indexFromLeftNibble(instruction[3]);
-        auto index2 = nvm::RegisterUtils::indexFromRightNibble(instruction[3]);
-        long addAddress;
-
-        switch (sourceRegType) {
-        case nvm::RegisterType::i8:
-            destinationAddress = (long)i8Registers_[index1];
-            addAddress = (long)i8Registers_[index2];
-            break;
-        case nvm::RegisterType::ui8:
-            destinationAddress = (long)ui8Registers_[index1];
-            addAddress = (long)ui8Registers_[index2];
-            break;
-        case nvm::RegisterType::i16:
-            destinationAddress = (long)i16Registers_[index1];
-            addAddress = (long)i16Registers_[index2];
-            break;
-        case nvm::RegisterType::ui16:
-            destinationAddress = (long)ui16Registers_[index1];
-            addAddress = (long)ui16Registers_[index2];
-            break;
-        case nvm::RegisterType::i32:
-            destinationAddress = (long)i32Registers_[index1];
-            addAddress = (long)i32Registers_[index2];
-            break;
-        case nvm::RegisterType::ui32:
-            destinationAddress = (long)ui32Registers_[index1];
-            addAddress = (long)ui32Registers_[index2];
-            break;
-        case nvm::RegisterType::f32:
-        case nvm::RegisterType::f64:
-            return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister);
-        }
-
-        if (nvm::RWCode::addRegisters(rwCode)) {
-            destinationAddress += addAddress;
-        }
-    } else {
-        destinationAddress = *((nvm::address_t*)&instruction[3]);
-    }
-
-    if (destinationAddress > interface_->getMaxMemory() || destinationAddress < 0) {
-        return nvm::Error(nvm::ErrorCategory::Memory, nvm::ErrorDetail::AddressOutOfRange);
-    }
-
     auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
     auto source = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
 
-    auto finalAddress = (address_t)destinationAddress;
+    auto maybeFinalAddress = getRWAddress(instruction);
+    RETURN_IF_ERROR(maybeFinalAddress.error_);
+
+    auto finalAddress = maybeFinalAddress.data_;
 
     switch (regType) {
     case nvm::RegisterType::i8:
@@ -398,13 +362,13 @@ nvm::Error nvm::Core::write(uint8_t instruction[]) {
     case nvm::RegisterType::ui16:
         return interface_->write(finalAddress, ui16Registers_[source]);
     case nvm::RegisterType::i32:
-      return interface_->write(finalAddress, i32Registers_[source]);
+        return interface_->write(finalAddress, i32Registers_[source]);
     case nvm::RegisterType::ui32:
-    return interface_->write(finalAddress, ui32Registers_[source]);
+        return interface_->write(finalAddress, ui32Registers_[source]);
     case nvm::RegisterType::f32:
-     return interface_->write(finalAddress, f32Registers_[source]);
+        return interface_->write(finalAddress, f32Registers_[source]);
     case nvm::RegisterType::f64:
-       return interface_->write(finalAddress, f64Registers_[source]);
+        return interface_->write(finalAddress, f64Registers_[source]);
     }
 
     return nvm::Error();
