@@ -223,9 +223,47 @@ nvm::Error nvm::Core::decrement(uint8_t instruction[]) {
 }
 
 nvm::Error nvm::Core::read(uint8_t instruction[]) {
+    auto rwCode = instruction[2];
     long sourceAddress;
-    if (nvm::RWCode::isRegisterSource(instruction[2])) {
+    if (nvm::RWCode::isRegisterSource(rwCode)) {
+        auto sourceRegType = nvm::RWCode::getSourceRegisterType(rwCode);
+        auto index1 = nvm::RegisterUtils::indexFromLeftNibble(instruction[3]);
+        auto index2 = nvm::RegisterUtils::indexFromRightNibble(instruction[3]);
+        long addAddress;
 
+        switch (sourceRegType) {
+        case nvm::RegisterType::i8:
+            sourceAddress = (long)i8Registers_[index1];
+            addAddress = (long)i8Registers_[index2];
+            break;
+        case nvm::RegisterType::ui8:
+            sourceAddress = (long)ui8Registers_[index1];
+            addAddress = (long)ui8Registers_[index2];
+            break;
+        case nvm::RegisterType::i16:
+            sourceAddress = (long)i16Registers_[index1];
+            addAddress = (long)i16Registers_[index2];
+            break;
+        case nvm::RegisterType::ui16:
+            sourceAddress = (long)ui16Registers_[index1];
+            addAddress = (long)ui16Registers_[index2];
+            break;
+        case nvm::RegisterType::i32:
+            sourceAddress = (long)i32Registers_[index1];
+            addAddress = (long)i32Registers_[index2];
+            break;
+        case nvm::RegisterType::ui32:
+            sourceAddress = (long)ui32Registers_[index1];
+            addAddress = (long)ui32Registers_[index2];
+            break;
+        case nvm::RegisterType::f32:
+        case nvm::RegisterType::f64:
+            return nvm::Error(nvm::ErrorCategory::Instruction, nvm::ErrorDetail::UnsupportedRegister);
+        }
+
+        if (nvm::RWCode::addRegisters(rwCode)) {
+            sourceAddress += addAddress;
+        }
     } else {
         sourceAddress = *((nvm::address_t*)&instruction[3]);
     }
@@ -243,35 +281,43 @@ nvm::Error nvm::Core::read(uint8_t instruction[]) {
     case nvm::RegisterType::i8: {
         auto readResult = interface_->read<int8_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        i8Registers_[destination] = readResult.data_; }
+        i8Registers_[destination] = readResult.data_;
+        break; }
     case nvm::RegisterType::ui8: {
         auto readResult = interface_->read<uint8_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        ui8Registers_[destination] = readResult.data_; }
+        ui8Registers_[destination] = readResult.data_;
+        break; }
     case nvm::RegisterType::i16: {
         auto readResult = interface_->read<int16_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        i16Registers_[destination] = readResult.data_; }
+        i16Registers_[destination] = readResult.data_; 
+        break; }
     case nvm::RegisterType::ui16: {
         auto readResult = interface_->read<uint16_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        ui16Registers_[destination] = readResult.data_; }
+        ui16Registers_[destination] = readResult.data_;
+        break; }
     case nvm::RegisterType::i32: {
         auto readResult = interface_->read<int32_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        i32Registers_[destination] = readResult.data_; }
+        i32Registers_[destination] = readResult.data_; 
+        break; }
     case nvm::RegisterType::ui32: {
         auto readResult = interface_->read<uint32_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        ui32Registers_[destination] = readResult.data_; }
+        ui32Registers_[destination] = readResult.data_; 
+        break; }
     case nvm::RegisterType::f32: {
         auto readResult = interface_->read<f32_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        f32Registers_[destination] = readResult.data_; }
+        f32Registers_[destination] = readResult.data_; 
+        break; }
     case nvm::RegisterType::f64: {
         auto readResult = interface_->read<f64_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
-        f64Registers_[destination] = readResult.data_; }
+        f64Registers_[destination] = readResult.data_; 
+        break; }
     }
 
     return nvm::Error();

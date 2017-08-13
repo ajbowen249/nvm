@@ -39,7 +39,7 @@ bool nvm::RWCode::isRegisterSource(uint8_t rwCode) {
 }
 
 bool nvm::RWCode::addRegisters(uint8_t rwCode) {
-    return rwCode & 0xC0;
+    return rwCode & 0x40;
 }
 
 nvm::RegisterType nvm::RWCode::getSourceRegisterType(uint8_t rwCode) {

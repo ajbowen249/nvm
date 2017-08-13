@@ -33,7 +33,7 @@ TEST_F(ReadTest, ReadUI32FromRegister) {
     iface_->write(address++, 0x00);
 
     processIterations(2);
-    EXPECT_EQ(-2123456789, core_.getUi32Register(0));
+    EXPECT_EQ(2123456789, core_.getUi32Register(0));
 }
 
 TEST_F(ReadTest, ReadF64FromAddedRegisters) {
