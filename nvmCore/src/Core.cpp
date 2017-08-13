@@ -66,7 +66,7 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
         return fetchAndIncrement(instruction, 2, nvm::JumpCode::getSize(instruction[1]));
     case nvm::Instruction::Read:
         RETURN_IF_ERROR(fetchAndIncrement(instruction, 1, 2));
-        return fetchAndIncrement(instruction, 2, nvm::RWCode::getSize(instruction[2]));
+        return fetchAndIncrement(instruction, 3, nvm::RWCode::getSize(instruction[2]));
     case nvm::Instruction::Increment:
     case nvm::Instruction::Decrement:
         return fetchAndIncrement(instruction, 1, 1);
@@ -227,7 +227,7 @@ nvm::Error nvm::Core::read(uint8_t instruction[]) {
     if (nvm::RWCode::isRegisterSource(instruction[2])) {
 
     } else {
-        sourceAddress = *((nvm::address_t*)&instruction[2]);
+        sourceAddress = *((nvm::address_t*)&instruction[3]);
     }
 
     if (sourceAddress > interface_->getMaxMemory() || sourceAddress < 0) {
