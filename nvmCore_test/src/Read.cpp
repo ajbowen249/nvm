@@ -15,6 +15,7 @@ TEST_F(ReadTest, ReadI8FromLiteral) {
 
     processIterations(1);
     EXPECT_EQ(-123, core_.getI8Register(0));
+    FLAGS(N).verify(core_);
 }
 
 TEST_F(ReadTest, ReadUI32FromRegister) {
@@ -34,6 +35,7 @@ TEST_F(ReadTest, ReadUI32FromRegister) {
 
     processIterations(2);
     EXPECT_EQ(2123456789, core_.getUi32Register(0));
+    FLAGS(P).verify(core_);
 }
 
 TEST_F(ReadTest, ReadF64FromAddedRegisters) {
@@ -59,14 +61,30 @@ TEST_F(ReadTest, ReadF64FromAddedRegisters) {
 
     processIterations(3);
     EXPECT_EQ(123.456, core_.getF64Register(0));
+    FLAGS(P).verify(core_);
 }
 
-TEST_F(ReadTest, LiteralError) {
+TEST_F(ReadTest, LiteralError1) {
     nvm::address_t readFromAddress = 0xFFFF;
 
     nvm::address_t address = 0;
     iface_->write(address++, nvm::Instruction::Read);
     iface_->write(address++, (nvm::RegisterType::i8 << 4) | 0x00);
+    iface_->write(address++, 0x00);
+    iface_->write<nvm::address_t>(address, readFromAddress);
+    address += 2;
+
+    auto error = core_.process();
+    EXPECT_TRUE((bool)error);
+    EXPECT_EQ(nvm::ErrorDetail::AddressOutOfRange, error.detail_);
+}
+
+TEST_F(ReadTest, LiteralError2) {
+    nvm::address_t readFromAddress = 0x03FD;
+
+    nvm::address_t address = 0;
+    iface_->write(address++, nvm::Instruction::Read);
+    iface_->write(address++, (nvm::RegisterType::ui32 << 4) | 0x00);
     iface_->write(address++, 0x00);
     iface_->write<nvm::address_t>(address, readFromAddress);
     address += 2;

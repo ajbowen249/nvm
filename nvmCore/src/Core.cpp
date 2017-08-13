@@ -282,41 +282,49 @@ nvm::Error nvm::Core::read(uint8_t instruction[]) {
         auto readResult = interface_->read<int8_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         i8Registers_[destination] = readResult.data_;
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::ui8: {
         auto readResult = interface_->read<uint8_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         ui8Registers_[destination] = readResult.data_;
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::i16: {
         auto readResult = interface_->read<int16_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         i16Registers_[destination] = readResult.data_; 
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::ui16: {
         auto readResult = interface_->read<uint16_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         ui16Registers_[destination] = readResult.data_;
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::i32: {
         auto readResult = interface_->read<int32_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         i32Registers_[destination] = readResult.data_; 
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::ui32: {
         auto readResult = interface_->read<uint32_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         ui32Registers_[destination] = readResult.data_; 
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::f32: {
         auto readResult = interface_->read<f32_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         f32Registers_[destination] = readResult.data_; 
+        setResultFlags(readResult.data_);
         break; }
     case nvm::RegisterType::f64: {
         auto readResult = interface_->read<f64_t>(finalAddress);
         RETURN_IF_ERROR(readResult.error_);
         f64Registers_[destination] = readResult.data_; 
+        setResultFlags(readResult.data_);
         break; }
     }
 
