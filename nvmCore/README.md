@@ -208,8 +208,28 @@ Decrements the value of the given register by 1.
 
 Reads a value from memory into the register specified by the seond byte. Attempting to read from an address higher than max memory minus the size of the register type will produce an error. The third byte specifies from where the read adrress will come. It has the format:
 - 0: Source flag. If set, the source will be a register. If clear, the source will be an address_t specified by the remaining bytes.
-- 1: Add flag. If the source flag and this flag are both set, Two registers will be added together to form the read address.
+- 1: Add flag. If the source flag and this flag are both set, two registers will be added together to form the read address.
 - 2-3: Reserved for future use.
 - 4-7: Type of the register(s) to be used if the source flag is set.
 
 When sourcing the read address from a register, an error will be thrown when attempting to use a floating-point type or for negative values.
+
+### Write
+**Mnemonic**: WR
+
+**Length**: variable
+
+**Affects Flags**: None
+
+| 0        | 1                                           | 2                   | 3..n			 |
+|----------|---------------------------------------------|---------------------|-----------------|
+| 00001011 | tttt rrrr                                   | s a RR rrrr		   | xxxxxxxx		 |
+|          | type and number of the register to store    | address source code | additional data |
+
+Writes a value to memory from the register specified by the seond byte. Attempting to write to an address higher than max memory minus the size of the register type will produce an error. The third byte specifies from where the write adrress will come. It has the format:
+- 0: Source flag. If set, the source will be a register. If clear, the source will be an address_t specified by the remaining bytes.
+- 1: Add flag. If the source flag and this flag are both set, two registers will be added together to form the write address.
+- 2-3: Reserved for future use.
+- 4-7: Type of the register(s) to be used if the source flag is set.
+
+When sourcing the write address from a register, an error will be thrown when attempting to use a floating-point type or for negative values.
