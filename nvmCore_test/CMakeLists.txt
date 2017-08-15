@@ -9,6 +9,7 @@ add_executable(nvmCore_test
     src/Decrement.cpp
     src/Read.cpp
     src/Write.cpp
+    src/Push.cpp
 )
 
 target_include_directories(nvmCore

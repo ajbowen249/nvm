@@ -221,10 +221,10 @@ When sourcing the read address from a register, an error will be thrown when att
 
 **Affects Flags**: None
 
-| 0        | 1                                           | 2                   | 3..n			 |
-|----------|---------------------------------------------|---------------------|-----------------|
-| 00001011 | tttt rrrr                                   | s a RR rrrr		   | xxxxxxxx		 |
-|          | type and number of the register to store    | address source code | additional data |
+| 0        | 1                                        | 2                   | 3..n			 |
+|----------|------------------------------------------|---------------------|-----------------|
+| 00001011 | tttt rrrr                                | s a RR rrrr		   | xxxxxxxx		 |
+|          | type and number of the register to store | address source code | additional data |
 
 Writes a value to memory from the register specified by the seond byte. Attempting to write to an address higher than max memory minus the size of the register type will produce an error. The third byte specifies from where the write adrress will come. It has the format:
 - 0: Source flag. If set, the source will be a register. If clear, the source will be an address_t specified by the remaining bytes.
@@ -233,3 +233,17 @@ Writes a value to memory from the register specified by the seond byte. Attempti
 - 4-7: Type of the register(s) to be used if the source flag is set.
 
 When sourcing the write address from a register, an error will be thrown when attempting to use a floating-point type or for negative values.
+
+### Push
+**Mnemonic**: PSH
+
+**Length**: 2
+
+**Affects Flags**: None
+
+| 0        | 1                                       |
+|----------|-----------------------------------------|
+| 00001100 | tttt rrrr                               |
+|          | type and number of the register to push |
+
+Pushes the given register onto the stack. An error will be produced if there is not enough room remaining on the stack.

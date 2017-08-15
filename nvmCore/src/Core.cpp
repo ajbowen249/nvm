@@ -40,6 +40,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::Decrement: instructionError = decrement(instruction); break;
     case nvm::Instruction::Read: instructionError = read(instruction); break;
     case nvm::Instruction::Write: instructionError = write(instruction); break;
+    case nvm::Instruction::Push: instructionError = push(instruction); break;
     default:
         break;
     }
@@ -71,6 +72,7 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
         return fetchAndIncrement(instruction, 3, nvm::RWCode::getSize(instruction[2]));
     case nvm::Instruction::Increment:
     case nvm::Instruction::Decrement:
+    case nvm::Instruction::Push:
         return fetchAndIncrement(instruction, 1, 1);
     case nvm::Instruction::NoOp:
     case nvm::Instruction::Return:
@@ -368,6 +370,32 @@ nvm::Error nvm::Core::write(uint8_t instruction[]) {
         return interface_->write(finalAddress, f32Registers_[source]);
     case nvm::RegisterType::f64:
         return interface_->write(finalAddress, f64Registers_[source]);
+    }
+
+    return nvm::Error();
+}
+
+nvm::Error nvm::Core::push(uint8_t instruction[]) {
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto source = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    switch (regType) {
+    case nvm::RegisterType::i8:
+        return pushStack(i8Registers_[source]);
+    case nvm::RegisterType::ui8:
+        return pushStack(ui8Registers_[source]);
+    case nvm::RegisterType::i16:
+        return pushStack(i16Registers_[source]);
+    case nvm::RegisterType::ui16:
+        return pushStack(ui16Registers_[source]);
+    case nvm::RegisterType::i32:
+        return pushStack(i32Registers_[source]);
+    case nvm::RegisterType::ui32:
+        return pushStack(ui32Registers_[source]);
+    case nvm::RegisterType::f32:
+        return pushStack(f32Registers_[source]);
+    case nvm::RegisterType::f64:
+        return pushStack(f64Registers_[source]);
     }
 
     return nvm::Error();

@@ -21,7 +21,8 @@ namespace nvm {
         Increment = 0x08,
         Decrement = 0x09,
         Read = 0x0A,
-        Write = 0x0B
+        Write = 0x0B,
+        Push = 0x0C
     };
 
     class Core {
@@ -156,6 +157,7 @@ namespace nvm {
         Error decrement(uint8_t instruction[]);
         Error read(uint8_t instruction[]);
         Error write(uint8_t instruction[]);
+        Error push(uint8_t instruction[]);
     };
 }
 
