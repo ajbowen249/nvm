@@ -4,7 +4,7 @@
 #include <nvmCore/RegisterTypes.h>
 
 int main(int argc, char** argv) {
-    nvm::Interface::Ptr iface(new nvm::InMemoryInterface(1024));
+    nvm::Interface::Ptr iface(new nvm::InMemoryInterface());
     nvm::Options::Ptr options(new nvm::Options());
     nvm::ObservableCore core;
     core.initialize(iface, options);

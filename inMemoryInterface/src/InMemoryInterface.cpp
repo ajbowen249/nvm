@@ -1,8 +1,7 @@
 #include "inMemoryInterface/InMemoryInterface.h"
 
-nvm::InMemoryInterface::InMemoryInterface(nvm::address_t memorySize) :
-    maxAddress_(memorySize - 1),
-    memory_(memorySize) { }
+nvm::InMemoryInterface::InMemoryInterface() :
+    maxAddress_(INMEM_SIZE - 1) { }
 
 nvm::address_t nvm::InMemoryInterface::getMaxMemory() const {
     return maxAddress_;

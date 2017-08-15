@@ -1,7 +1,7 @@
 #include <nvmCore_test/BasicTestFixture.h>
 
 nvm::test::BasicTestFixture::BasicTestFixture() :
-    iface_(new nvm::InMemoryInterface(1024)) {
+    iface_(new nvm::InMemoryInterface()) {
     inMemoryInterface_ = (nvm::InMemoryInterface*)(iface_.get());
 
     nvm::Options::Ptr options(new nvm::Options());

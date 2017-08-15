@@ -8,8 +8,6 @@ The core implementation of the nvm
 #include "Options.h"
 #include "Error.h"
 
-#include <type_traits>
-
 namespace nvm {
     enum Instruction {
         NoOp = 0x00,
@@ -146,7 +144,6 @@ namespace nvm {
             setResultFlags(registers[destination]);
         }
 
-#pragma region instructions
         Error noOp();
         Error add(uint8_t instruction[]);
         Error subtract(uint8_t instruction[]);
@@ -159,7 +156,6 @@ namespace nvm {
         Error decrement(uint8_t instruction[]);
         Error read(uint8_t instruction[]);
         Error write(uint8_t instruction[]);
-#pragma endregion instructions
     };
 }
 

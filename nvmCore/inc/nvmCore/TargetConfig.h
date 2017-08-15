@@ -5,7 +5,7 @@
 Overridable options for targets.
 */
 
-#include <cstdint>
+#include <stdint.h>
 
 //Declaring these at the global level so they gel with the
 //fixed-width interger types and in case they need to be

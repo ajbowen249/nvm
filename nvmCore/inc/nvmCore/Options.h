@@ -12,7 +12,11 @@ Runtime-configurable options
 namespace nvm {
     class Options {
     public:
+        #ifndef __ARDUINO
         typedef std::shared_ptr<const Options> Ptr;
+        #else
+        typedef Options* Ptr;
+        #endif
 
         Options();
 

@@ -1,5 +1,4 @@
 #include "nvmCore/Options.h"
-#include <functional>
 
 nvm::Options::Options() :
     stackSize_(512),
@@ -13,20 +12,17 @@ void nvm::Options::setBootVector(nvm::address_t bootVector) { bootVector_ = boot
 
 nvm::Error nvm::Options::validate(nvm::Interface::Ptr interface) const {
     auto maxMemory = interface->getMaxMemory();
-    auto configurationError = std::function<nvm::Error(nvm::ErrorDetail)>([](nvm::ErrorDetail detail) {
-        return nvm::Error(nvm::ErrorCategory::Configuration, detail);
-    });
 
     if (stackSize_ > maxMemory) {
-        return configurationError(nvm::ErrorDetail::StackSizeGreaterThanMemorySpace);
+        return nvm::Error(nvm::ErrorCategory::Configuration, nvm::ErrorDetail::StackSizeGreaterThanMemorySpace);
     }
 
     if (bootVector_ > maxMemory) {
-        return configurationError(nvm::ErrorDetail::BootVectorGreaterThanMemorySpace);
+        return nvm::Error(nvm::ErrorCategory::Configuration, nvm::ErrorDetail::BootVectorGreaterThanMemorySpace);
     }
 
     if (bootVector_ > maxMemory - stackSize_) {
-        return configurationError(nvm::ErrorDetail::BootVectorInsideStack);
+        return nvm::Error(nvm::ErrorCategory::Configuration, nvm::ErrorDetail::BootVectorInsideStack);
     }
 
     return nvm::Error();

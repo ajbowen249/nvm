@@ -158,7 +158,6 @@ nvm::ErrorUnion<nvm::address_t> nvm::Core::getRWAddress(uint8_t instruction[]) {
     return nvm::ErrorUnion<nvm::address_t>((address_t)address);
 }
 
-#pragma region instructions
 nvm::Error nvm::Core::noOp() {
     return nvm::Error();
 }
@@ -373,5 +372,3 @@ nvm::Error nvm::Core::write(uint8_t instruction[]) {
 
     return nvm::Error();
 }
-
-#pragma endregion instructions

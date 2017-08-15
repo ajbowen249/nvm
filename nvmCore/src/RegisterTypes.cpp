@@ -15,6 +15,8 @@ nvm::address_t nvm::RegisterUtils::getSize(nvm::RegisterType type) {
     case nvm::RegisterType::f64:
         return 8;
     }
+
+    return 0;
 }
 
 nvm::RegisterType nvm::RegisterUtils::typeFromLeftNibble(uint8_t byte) {

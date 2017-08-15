@@ -7,12 +7,19 @@ Abstract interface for implementing  IO capabilities per-platform.
 
 #include "TargetConfig.h"
 #include "Error.h"
+
+#ifndef __ARDUINO
 #include <memory>
+#endif
 
 namespace nvm {
     class Interface {
     public:
+        #ifndef __ARDUINO
         typedef std::shared_ptr<Interface> Ptr;
+        #else
+        typedef Interface* Ptr;
+        #endif
 
         template <typename tdata>
         Error write(address_t address, tdata data) {
