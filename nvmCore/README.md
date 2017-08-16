@@ -235,7 +235,7 @@ Writes a value to memory from the register specified by the seond byte. Attempti
 When sourcing the write address from a register, an error will be thrown when attempting to use a floating-point type or for negative values.
 
 ### Push
-**Mnemonic**: PSH
+**Mnemonic**: PUSH
 
 **Length**: 2
 
@@ -247,3 +247,17 @@ When sourcing the write address from a register, an error will be thrown when at
 |          | type and number of the register to push |
 
 Pushes the given register onto the stack. An error will be produced if there is not enough room remaining on the stack.
+
+### Pop
+**Mnemonic**: POP
+
+**Length**: 2
+
+**Affects Flags**: NZP
+
+| 0        | 1                                                  |
+|----------|----------------------------------------------------|
+| 00001101 | tttt rrrr                                          |
+|          | type and number of the register into which to push |
+
+Pops a value off the stack into the given register. An error will be produced if the stack is not deep enough to hold the required type.

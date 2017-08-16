@@ -10,6 +10,7 @@ add_executable(nvmCore_test
     src/Read.cpp
     src/Write.cpp
     src/Push.cpp
+    src/Pop.cpp
 )
 
 target_include_directories(nvmCore

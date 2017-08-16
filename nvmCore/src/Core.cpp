@@ -41,6 +41,7 @@ nvm::Error nvm::Core::process() {
     case nvm::Instruction::Read: instructionError = read(instruction); break;
     case nvm::Instruction::Write: instructionError = write(instruction); break;
     case nvm::Instruction::Push: instructionError = push(instruction); break;
+    case nvm::Instruction::Pop: instructionError = pop(instruction); break;
     default:
         break;
     }
@@ -73,6 +74,7 @@ nvm::Error nvm::Core::fetchInstruction(uint8_t instruction[]) {
     case nvm::Instruction::Increment:
     case nvm::Instruction::Decrement:
     case nvm::Instruction::Push:
+    case nvm::Instruction::Pop:
         return fetchAndIncrement(instruction, 1, 1);
     case nvm::Instruction::NoOp:
     case nvm::Instruction::Return:
@@ -396,6 +398,56 @@ nvm::Error nvm::Core::push(uint8_t instruction[]) {
         return pushStack(f32Registers_[source]);
     case nvm::RegisterType::f64:
         return pushStack(f64Registers_[source]);
+    }
+
+    return nvm::Error();
+}
+
+nvm::Error nvm::Core::pop(uint8_t instruction[]) {
+    auto regType = nvm::RegisterUtils::typeFromLeftNibble(instruction[1]);
+    auto source = nvm::RegisterUtils::indexFromRightNibble(instruction[1]);
+
+    switch (regType) {
+    case nvm::RegisterType::i8: {
+        auto popResult = popStack<int8_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        i8Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::ui8: {
+        auto popResult = popStack<uint8_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        ui8Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::i16: {
+        auto popResult = popStack<int16_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        i16Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::ui16: {
+        auto popResult = popStack<uint16_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        ui16Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::i32: {
+        auto popResult = popStack<int32_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        i32Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::ui32: {
+        auto popResult = popStack<uint32_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        ui32Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::f32: {
+        auto popResult = popStack<f32_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        f32Registers_[source] = popResult.data_;
+        break; }
+    case nvm::RegisterType::f64: {
+        auto popResult = popStack<f64_t>();
+        RETURN_IF_ERROR(popResult.error_);
+        f64Registers_[source] = popResult.data_;
+        break; }
     }
 
     return nvm::Error();
