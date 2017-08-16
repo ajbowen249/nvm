@@ -17,6 +17,7 @@ TEST_F(PopTest, PopI8) {
     processIterations(3);
 
     EXPECT_EQ(-123, core_.getI8Register(1));
+    FLAGS(N).verify(core_);
 }
 
 TEST_F(PopTest, PopF64) {
@@ -35,6 +36,7 @@ TEST_F(PopTest, PopF64) {
     processIterations(3);
 
     EXPECT_EQ(1.2345, core_.getF64Register(1));
+    FLAGS(P).verify(core_);
 }
 
 TEST_F(PopTest, PopError1) {

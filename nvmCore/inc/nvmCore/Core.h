@@ -129,7 +129,9 @@ namespace nvm {
 
         template <typename tdata>
         ErrorUnion<tdata> popStack() {
-            return scrapeStack<tdata>(true);
+            auto data = scrapeStack<tdata>(true);
+            if(!data.error_) setResultFlags(data.data_);
+            return data;
         }
 
         template <typename tdata>
