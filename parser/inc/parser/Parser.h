@@ -1,15 +1,10 @@
-#ifndef __PARSER_H__
-#define __PARSER_H__
-
-#include <nvmCore/Core.h>
-#include "ParseError.h"
-#include <vector>
+#include <antlr4-runtime.h>
+#include "NVMParser.h"
+#include <string>
 
 namespace nvm {
-    class Parser {
+    class Parser{
     public:
-        static ParseResult<std::vector<uint8_t>> Parse(const char* program);
+        static void parse(const std::string& program);
     };
 }
-
-#endif //__PARSER_H__

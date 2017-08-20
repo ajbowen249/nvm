@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 if (WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "/MT")
     set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+	option(CMAKE_USE_WIN32_THREADS_INIT "using WIN32 threads" ON)
 endif (WIN32)
 
 add_definitions(
