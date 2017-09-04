@@ -1,10 +1,13 @@
-#include <antlr4-runtime.h>
-#include "NVMParser.h"
-#include <string>
+#ifndef __PARSER_H__
+#define __PARSER_H__
+
+#include <iostream>
 
 namespace nvm {
-    class Parser{
+    class Parser {
     public:
-        static void parse(const std::string& program);
+        static void parse(std::ifstream& programStream);
     };
 }
+
+#endif //__PARSER_H__
